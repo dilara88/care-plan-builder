@@ -274,6 +274,23 @@
     .bar-detail{margin-left:0}
     .availability{margin-left:0}
     .meal-library{grid-template-columns:1fr}
+    #shoppingDetails .starter-box,#mealDetails .starter-box{display:block; min-width:0; padding:14px}
+    #shoppingDetails .starter-copy,#mealDetails .starter-copy{width:100%; min-width:0}
+    #shoppingDetails .starter-copy .f,#mealDetails .starter-copy .f{display:block; overflow-wrap:anywhere}
+    #shoppingDetails .starter-copy p,#mealDetails .starter-copy p{width:100%; overflow-wrap:anywhere}
+    #shoppingDetails .starter-box > .btn-ghost,#mealDetails .starter-box > .btn-ghost{display:block; max-width:100%; margin-top:12px; padding-left:0; white-space:normal; text-align:left}
+    #shoppingDetails .starter-chips,#mealDetails .starter-chips{width:100%; padding-top:12px}
+    #shoppingDetails .starter-chip,#mealDetails .starter-chip{max-width:100%; white-space:normal; text-align:left; overflow-wrap:anywhere}
+    #mealDetails .meal-plan-wrap{overflow:visible !important}
+    #mealDetails .meal-plan{display:block; width:100%; border:0}
+    #mealDetails .meal-plan thead{display:none}
+    #mealDetails .meal-plan tbody{display:grid; gap:10px; width:100%}
+    #mealDetails .meal-plan tr{display:block; width:100%; border:1px solid var(--rule); border-radius:10px; overflow:hidden; background:#fff}
+    #mealDetails .meal-plan th{display:block; width:100%; padding:9px 10px; border:0; border-bottom:1px solid var(--rule); font-size:12px}
+    #mealDetails .meal-plan td{display:grid; grid-template-columns:1fr; gap:4px; width:100%; padding:8px 10px; border:0; border-bottom:1px solid var(--rule)}
+    #mealDetails .meal-plan td:last-child{border-bottom:0}
+    #mealDetails .meal-plan td::before{content:attr(data-label); color:var(--ink-soft); font-size:11.5px; font-weight:600; overflow-wrap:anywhere}
+    #mealDetails .meal-plan select{width:100%; min-width:0; max-width:100%; padding:7px}
     .compact-form{grid-template-columns:1fr}
     .compact-form .wide{grid-column:auto}
     .week-panel .plan-head{flex-wrap:wrap; align-items:flex-start}
@@ -542,7 +559,7 @@
             <div class="compact-actions"><button class="btn-primary" id="mealSubmit" onclick="addMeal()"></button><button class="btn" id="mealCancel" hidden onclick="cancelMealEdit()" data-i18n="cancel"></button></div>
           </div>
           <h3 class="module-subhead" style="margin-top:20px" data-i18n="weeklyMealsHead"></h3>
-          <div style="overflow-x:auto"><table class="meal-plan" id="mealPlan"></table></div>
+          <div class="meal-plan-wrap" style="overflow-x:auto"><table class="meal-plan" id="mealPlan"></table></div>
         </div>
       </details>
     </section>
@@ -2115,7 +2132,7 @@ function renderMeals(){
     <div class="meal-card"><h4>${esc(meal.name)}</h4>${meal.ingredients?`<p><b>${t("ingredientsLabel")}:</b> ${esc(meal.ingredients)}</p>`:""}${meal.notes?`<p>${esc(meal.notes)}</p>`:""}
     <div class="meal-actions"><button class="btn-ghost" onclick="addMealIngredientsToShopping(${meal.id})">${t("addIngredients")}</button><button class="btn-ghost" onclick="startEditMeal(${meal.id})">${t("edit")}</button><button class="btn-ghost del" onclick="removeMeal(${meal.id})">${t("remove")}</button></div></div>`).join(""):`<div class="empty">${t("emptyMeals")}</div>`;
   const optionHtml=selected=>`<option value="">${t("chooseMeal")}</option>`+state.meals.map(m=>`<option value="${m.id}"${m.id===selected?" selected":""}>${esc(m.name)}</option>`).join("");
-  document.getElementById("mealPlan").innerHTML=`<thead><tr><th></th><th>${t("mealSlots").breakfast}</th><th>${t("mealSlots").lunch}</th><th>${t("mealSlots").dinner}</th></tr></thead><tbody>`+ALL.map(day=>`<tr><th>${dL(day)}</th>${["breakfast","lunch","dinner"].map(slot=>`<td><select aria-label="${esc(dL(day)+" — "+t("mealSlots")[slot])}" onchange="setMealPlan(${day},'${slot}',this.value)">${optionHtml(state.mealPlan[day][slot])}</select></td>`).join("")}</tr>`).join("")+`</tbody>`;
+  document.getElementById("mealPlan").innerHTML=`<thead><tr><th></th><th>${t("mealSlots").breakfast}</th><th>${t("mealSlots").lunch}</th><th>${t("mealSlots").dinner}</th></tr></thead><tbody>`+ALL.map(day=>`<tr><th>${dL(day)}</th>${["breakfast","lunch","dinner"].map(slot=>`<td data-label="${esc(t("mealSlots")[slot])}"><select aria-label="${esc(dL(day)+" — "+t("mealSlots")[slot])}" onchange="setMealPlan(${day},'${slot}',this.value)">${optionHtml(state.mealPlan[day][slot])}</select></td>`).join("")}</tr>`).join("")+`</tbody>`;
 }
 
 /* ---------- Custom measurement tables ---------- */

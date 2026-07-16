@@ -1,0 +1,114 @@
+name: Deploy Care Plan Builder to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+
+      - name: Verify the certified application
+        shell: bash
+        run: |
+          expected="$(sed -n 's/^SHA-256: `\([0-9A-F]*\)`/\1/p' tests/TEST-REPORT.md)"
+          actual="$(sha256sum care-plan-builder.html | cut -d ' ' -f 1 | tr '[:lower:]' '[:upper:]')"
+          test -n "$expected"
+          test "$actual" = "$expected"
+
+      - name: Prepare the Pages artifact
+        shell: bash
+        run: |
+          mkdir -p _site
+          cp -- care-plan-builder.html _site/index.html
+          touch _site/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  release:
+    runs-on: ubuntu-latest
+    needs: deploy
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+
+      - name: Create the v1.0.0 offline release
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require("fs");
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            try {
+              await github.rest.repos.getReleaseByTag({
+                owner,
+                repo,
+                tag: "v1.0.0",
+              });
+              core.info("The v1.0.0 release already exists.");
+              return;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+            }
+
+            const release = await github.rest.repos.createRelease({
+              owner,
+              repo,
+              tag_name: "v1.0.0",
+              target_commitish: context.sha,
+              name: "Care Plan Builder v1.0.0",
+              body: [
+                "First public release of Care Plan Builder.",
+                "",
+                "Download `care-plan-builder.html` and open it in a browser to use the complete planner offline.",
+              ].join("\n"),
+              draft: false,
+              prerelease: false,
+            });
+
+            const data = fs.readFileSync("care-plan-builder.html");
+            await github.rest.repos.uploadReleaseAsset({
+              owner,
+              repo,
+              release_id: release.data.id,
+              name: "care-plan-builder.html",
+              data,
+              headers: {
+                "content-type": "text/html; charset=utf-8",
+                "content-length": data.length,
+              },
+            });

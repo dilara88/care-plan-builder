@@ -497,6 +497,11 @@ test("responsive and print rules exist", () => {
 
 test("mobile shopping and measurement layouts prevent clipped controls", () => {
   assert.match(html, /\.week-panel \.plan-head\{flex-wrap:wrap/);
+  assert.match(html, /\.module-summary\{flex-wrap:wrap/);
+  assert.match(html, /#roleList li,#dutyList li\{display:grid/);
+  assert.match(html, /class="li-actions"/);
+  assert.match(html, /#roleForm \.row > div,#dutyForm \.row > div\{flex:1 1 100% !important/);
+  assert.match(html, /@media \(min-width:561px\) and \(max-width:640px\)/);
   assert.match(html, /#shoppingDetails \.guide-item\{display:grid/);
   assert.match(html, /#shoppingDetails \.current-item\{display:grid/);
   assert.match(html, /class="item-actions"/);

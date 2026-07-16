@@ -495,6 +495,21 @@ test("responsive and print rules exist", () => {
   assert.match(html, /print-color-adjust:exact/);
 });
 
+test("mobile shopping and measurement layouts prevent clipped controls", () => {
+  assert.match(html, /\.week-panel \.plan-head\{flex-wrap:wrap/);
+  assert.match(html, /#shoppingDetails \.guide-item\{display:grid/);
+  assert.match(html, /#shoppingDetails \.current-item\{display:grid/);
+  assert.match(html, /class="item-actions"/);
+  assert.match(html, /class="btn-ghost current-action"/);
+  assert.match(html, /#measurementDetails \.measurement-table thead\{display:none\}/);
+  assert.match(html, /#measurementDetails \.measurement-table \.measurement-entry td\[data-label\]\{display:grid/);
+  assert.match(html, /class="measurement-entry"/);
+  assert.match(html, /data-label="\$\{esc\(c\.label\)\}"/);
+  assert.match(html, /aria-label="\$\{esc\(c\.label\)\}"/);
+  assert.match(html, /\.creator-credit\{[^}]*width:100%[^}]*text-align:center/);
+  assert.match(html, /\.p-foot\{[^}]*text-align:center/);
+});
+
 test("README describes the current bilingual feature set", () => {
   const phrases = [
     "# Care Plan Builder · Bakım Planı Oluşturucu",

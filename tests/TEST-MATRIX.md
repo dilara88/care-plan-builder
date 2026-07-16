@@ -21,7 +21,7 @@ The complete suite is run once in English and once in Turkish, followed by cross
 13. JSON export/import, strict field whitelisting, safe regenerated IDs, hostile/malformed/oversized files and legacy migration.
 14. Standards-mode doctype, complete CSS variables, accessible colour contrast, font/license metadata and public-name consistency.
 15. Web and PDF creator credit, copyright, A4 print layout, footer branding, colours and wrapping.
-16. Desktop, 768 px tablet and 390 px mobile browser layouts, keyboard access, focus and dialog semantics.
+16. Desktop, 768 px tablet and 390 px mobile browser layouts, including phone-specific Shopping Guide and Custom Measurement Table containment, preserved tablet table layouts, centered creator credits, keyboard access, focus and dialog semantics.
 17. Accessibility-tree names and landmarks, including all 21 weekly meal-plan dropdowns.
 18. Privacy: no network requests, no automatic storage and a real-browser offline reload.
 19. Exact-build seven-page English and Turkish PDFs generated from fully collapsed screen sections and visually inspected page by page.

@@ -88,12 +88,28 @@ async function detailedChrome(browser){
     await evaluate(cdp,"toggleLang()");await evaluate(cdp,"document.getElementById('planStage').scrollIntoView()");await screenshot(cdp,"chrome-mobile-390-example-plan-tr.png");
     assert.equal(await evaluate(cdp,"document.documentElement.lang"),"tr");
 
+    await evaluate(cdp,"setSectionOpen('shoppingDetails',true);document.getElementById('shoppingDetails').scrollIntoView()");await screenshot(cdp,"chrome-mobile-390-shopping-tr.png");
+    const shoppingContainment=await evaluate(cdp,`(()=>{const body=document.querySelector('#shoppingDetails .module-body').getBoundingClientRect();const selectors=['#shoppingDetails .category-card','#shoppingDetails .guide-item > *','#shoppingDetails .compact-form','#shoppingDetails .current-list','#shoppingDetails .current-item > *'];const offenders=selectors.flatMap(selector=>[...document.querySelectorAll(selector)]).filter(element=>{const rect=element.getBoundingClientRect();return rect.width>0&&(rect.left<body.left-1||rect.right>body.right+1)}).map(element=>element.className||element.tagName);return {offenders,guideDisplay:getComputedStyle(document.querySelector('#shoppingDetails .guide-item')).display,currentDisplay:getComputedStyle(document.querySelector('#shoppingDetails .current-item')).display}})()`);
+    assert.deepEqual(shoppingContainment.offenders,[]);assert.equal(shoppingContainment.guideDisplay,"grid");assert.equal(shoppingContainment.currentDisplay,"grid");
+    await evaluate(cdp,"document.querySelector('#shoppingDetails .current-list').scrollIntoView()");await screenshot(cdp,"chrome-mobile-390-shopping-current-tr.png");
+
+    await evaluate(cdp,"addMeasurementRow(state.measurements[0].id);setSectionOpen('measurementDetails',true);document.getElementById('measurementDetails').scrollIntoView()");await screenshot(cdp,"chrome-mobile-390-measurements-tr.png");
+    const measurementContainment=await evaluate(cdp,`(()=>{const body=document.querySelector('#measurementDetails .module-body').getBoundingClientRect();const selectors=['#measurementDetails .measurement-card','#measurementDetails .measurement-head > *','#measurementDetails .column-chip','#measurementDetails .measurement-entry','#measurementDetails .measurement-entry > *'];const offenders=selectors.flatMap(selector=>[...document.querySelectorAll(selector)]).filter(element=>{const rect=element.getBoundingClientRect();return rect.width>0&&(rect.left<body.left-1||rect.right>body.right+1)}).map(element=>element.className||element.tagName);return {offenders,headDisplay:getComputedStyle(document.querySelector('#measurementDetails .measurement-table thead')).display,rowDisplay:getComputedStyle(document.querySelector('#measurementDetails .measurement-entry')).display,cellDisplay:getComputedStyle(document.querySelector('#measurementDetails .measurement-entry td[data-label]')).display}})()`);
+    assert.deepEqual(measurementContainment.offenders,[]);assert.equal(measurementContainment.headDisplay,"none");assert.equal(measurementContainment.rowDisplay,"block");assert.equal(measurementContainment.cellDisplay,"grid");
+    await evaluate(cdp,"document.querySelector('#measurementDetails .measurement-entry').scrollIntoView()");await screenshot(cdp,"chrome-mobile-390-measurement-row-tr.png");
+    const mobileOverflow=await evaluate(cdp,`(()=>{const viewport=document.documentElement.clientWidth;return {viewport,scrollWidth:document.documentElement.scrollWidth,offenders:[...document.querySelectorAll('body *')].filter(element=>{const rect=element.getBoundingClientRect();return rect.width>0&&(rect.left<-1||rect.right>viewport+1)}).map(element=>({tag:element.tagName,id:element.id,className:String(element.className||''),left:Math.round(element.getBoundingClientRect().left),right:Math.round(element.getBoundingClientRect().right)})).slice(0,20)}})()`);
+    assert.equal(mobileOverflow.scrollWidth<=mobileOverflow.viewport,true,JSON.stringify(mobileOverflow,null,2));
+
     await viewport(cdp,768,900);await evaluate(cdp,"window.scrollTo(0,0)");await screenshot(cdp,"chrome-tablet-768-top-tr.png");
     await evaluate(cdp,"document.getElementById('planStage').scrollIntoView()");await screenshot(cdp,"chrome-tablet-768-example-plan-tr.png");
     assert.equal(await evaluate(cdp,"document.documentElement.scrollWidth<=document.documentElement.clientWidth"),true);
-    results.responsive.tablet768={overflow:false};
+    const tabletModules=await evaluate(cdp,"({guide:getComputedStyle(document.querySelector('#shoppingDetails .guide-item')).display,current:getComputedStyle(document.querySelector('#shoppingDetails .current-item')).display,measurementHead:getComputedStyle(document.querySelector('#measurementDetails .measurement-table thead')).display,measurementRow:getComputedStyle(document.querySelector('#measurementDetails .measurement-entry')).display,modulePadding:getComputedStyle(document.querySelector('#shoppingDetails .module-body')).paddingLeft})");
+    assert.deepEqual(tabletModules,{guide:"flex",current:"flex",measurementHead:"table-header-group",measurementRow:"table-row",modulePadding:"24px"});
+    results.responsive.tablet768={overflow:false,desktopTableLayoutPreserved:true};
 
     await viewport(cdp,1440,1000);await evaluate(cdp,"toggleLang();window.scrollTo(0,0)");await screenshot(cdp,"chrome-desktop-1440-top-en.png");
+    assert.equal(await evaluate(cdp,"getComputedStyle(document.getElementById('creatorCredit')).textAlign"),"center");
+    await evaluate(cdp,"document.querySelector('footer.creator-credit').scrollIntoView()");await screenshot(cdp,"chrome-desktop-1440-footer-en.png");
 
     await navigate(cdp,appUrl);await viewport(cdp,1200,900);
     await evaluate(cdp,"document.querySelector('#careDetails summary').focus()");const before=await evaluate(cdp,"document.getElementById('careDetails').open");await key(cdp,"Enter");
@@ -125,7 +141,9 @@ async function detailedChrome(browser){
       const restored=await evaluate(cdp,"collapsibleSections().forEach(item=>item.open=false);window.__printCalled=false;window.print=()=>{window.__printCalled=true};printPlan().then(()=>({called:window.__printCalled,closed:collapsibleSections().every(item=>!item.open)}))",true);
       assert.deepEqual(restored,{called:true,closed:true});
       await evaluate(cdp,"collapsibleSections().forEach(item=>item.open=true);renderPrint()");
+      await cdp.send("Emulation.setEmulatedMedia",{media:"print"});assert.equal(await evaluate(cdp,"getComputedStyle(document.querySelector('.p-foot')).textAlign"),"center");
       const printed=await cdp.send("Page.printToPDF",{printBackground:true,preferCSSPageSize:true,displayHeaderFooter:false});const bytes=Buffer.from(printed.data,"base64");
+      await cdp.send("Emulation.setEmulatedMedia",{media:"screen"});
       await evaluate(cdp,"collapsibleSections().forEach(item=>item.open=false)");assert.equal(await evaluate(cdp,"collapsibleSections().every(item=>!item.open)"),true);
       const pdfPath=path.join(outputDir,locale==="en"?"Care Plan Builder EN - current.pdf":"Bakım Planı Oluşturucu TR - current.pdf");fs.writeFileSync(pdfPath,bytes);
       const pages=pageCount(bytes);assert(pages>=1&&pages<=20);results.pdf[locale]={path:pdfPath,pages,bytes:bytes.length,allSectionsCollapsedBeforePrint:true};

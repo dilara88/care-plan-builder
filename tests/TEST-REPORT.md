@@ -2,7 +2,7 @@
 
 Date: 16 July 2026  
 Production file: `care-plan-builder.html`  
-SHA-256: `A15222555E253B029FFF15BB90FCFA89B5FC1EA17E01B9C9C633D3BCA111C741`
+SHA-256: `EF34F97A2A287F5E4D0F612C3EC8EDD3DC6C5037447D16604BA3A46AAA796DED`
 
 This report covers the exact HTML build identified above. The automated suites, real-browser checks and bilingual PDFs were regenerated after the final standards, security, accessibility, documentation and heading title-case changes.
 
@@ -10,10 +10,10 @@ This report covers the exact HTML build identified above. The automated suites, 
 
 | Suite | Passed | Failed | Status |
 |---|---:|---:|---|
-| Static, data, translation, privacy, security and regression checks | 47 | 0 | Passed |
+| Static, data, translation, privacy, security and regression checks | 48 | 0 | Passed |
 | English and Turkish functional simulation | 57 | 0 | Passed |
 | Staged first-open experience | 6 | 0 | Passed |
-| Automated total | 110 | 0 | Passed |
+| Automated total | 111 | 0 | Passed |
 | Chrome release browser check | 1 | 0 | Passed |
 | Edge release browser check | 1 | 0 | Passed |
 | English PDF pages visually inspected | 7 | 0 | Passed |
@@ -31,6 +31,8 @@ This report covers the exact HTML build identified above. The automated suites, 
 - Fraunces is no longer used or listed as a bundled font.
 - The README accurately describes offline glossary translation and preserved unmatched wording.
 - Local development and visual-test artifacts are excluded through `.gitignore`.
+- At phone width, Shopping Guide items, current-list actions and custom measurement rows reflow within their frames; the 768 px tablet and desktop layouts retain their original row and table presentation.
+- The creator credit is centered on the webpage and in both PDF languages.
 
 ## Backup Security Coverage
 
@@ -53,6 +55,8 @@ The release browser script opened the final local HTML directly from disk with i
 
 - Chrome and Edge loaded the app in standards mode and completed bilingual example-plan smoke tests.
 - Chrome emulated 390 × 844 mobile and 768 × 900 tablet viewports with no horizontal overflow.
+- The 390 px pass opened the Turkish Shopping Guide and Custom Measurement Tables, checked every relevant child against its container, and visually captured the guide, current list and a populated measurement row.
+- The 768 px pass explicitly confirmed that shopping items remain rows, measurement tables remain tables and the original module spacing is preserved.
 - The English and Turkish example result views remained readable at both tested widths.
 - Native disclosure controls toggled from the keyboard.
 - A care option could be chosen with Enter.
@@ -81,8 +85,8 @@ This provides a useful screen-reader semantic proxy, but it is not a substitute 
 
 Fresh PDFs were created from the exact release build after loading the complete example plan and closing every screen section first. The test confirmed that printing temporarily opened every section, rendered the complete plan and restored the collapsed screen state afterward.
 
-- English: 7 A4 pages, 437,247 bytes.
-- Turkish: 7 A4 pages, 472,608 bytes.
+- English: 7 A4 pages, 437,265 bytes.
+- Turkish: 7 A4 pages, 472,626 bytes.
 - Browser-generated headers and footers were disabled.
 - All 14 pages were opened in Chrome's PDF viewer and visually inspected.
 - No content clipping, overlap, distorted glyphs or broken table continuation was found.
@@ -91,6 +95,7 @@ Fresh PDFs were created from the exact release build after loading the complete 
 - Shopping tables continued across pages with their headers.
 - The blank measurement design contained no values or personal information.
 - The bilingual privacy, medical-boundary, creator and copyright footer content was present.
+- Creator and copyright lines were centered in both regenerated PDFs.
 
 Current artifacts are stored locally in `visual tests/current-release/` and are excluded from publication by `.gitignore`.
 

@@ -8,7 +8,7 @@
 
 A free, private and offline planning tool for households that care for someone — a baby, a child, an older adult, a partner in recovery, or anyone else who needs support. Set out the roles, recurring duties and household routines; the tool builds a weekly plan, reveals coverage gaps and shows how the estimated workload is distributed.
 
-**Try it:** download [`care-plan-builder.html`](care-plan-builder.html) and open it in your browser. The entire application is contained in that one file.
+**Use it online:** [Open Care Plan Builder](https://dilara88.github.io/care-plan-builder/). To use it offline, download [`care-plan-builder.html`](care-plan-builder.html) and open it in your browser. The entire application is contained in that one file.
 
 ### Why it exists
 
@@ -49,7 +49,7 @@ Care Plan Builder records schedules and information that the household has alrea
 
 Birine bakım veren haneler için ücretsiz, özel ve çevrimdışı bir planlama aracı — bir bebek, çocuk, yaşlı bir yakın, iyileşme sürecindeki bir eş veya desteğe ihtiyaç duyan herhangi biri. Rolleri, tekrarlanan görevleri ve ev düzenini yazın; araç haftalık planı oluştursun, açıkta kalan görevleri ve tahmini iş yükünün nasıl dağıldığını göstersin.
 
-**Denemek için:** [`care-plan-builder.html`](care-plan-builder.html) dosyasını indirin ve tarayıcınızda açın. Uygulamanın tamamı bu tek dosyanın içindedir.
+**Çevrimiçi kullanın:** [Bakım Planı Oluşturucu'yu açın](https://dilara88.github.io/care-plan-builder/). Çevrimdışı kullanmak için [`care-plan-builder.html`](care-plan-builder.html) dosyasını indirin ve tarayıcınızda açın. Uygulamanın tamamı bu tek dosyanın içindedir.
 
 ### Neden var
 

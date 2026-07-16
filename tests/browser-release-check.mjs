@@ -62,7 +62,7 @@ async function evaluate(cdp,expression,awaitPromise=false){
 }
 async function waitForApp(cdp){await poll(async()=>{const ready=await evaluate(cdp,"document.readyState==='complete' && typeof loadExample==='function'");if(!ready)throw new Error("App not ready");return true})}
 async function navigate(cdp,url){await cdp.send("Page.navigate",{url});await waitForApp(cdp)}
-async function viewport(cdp,width,height){await cdp.send("Emulation.setDeviceMetricsOverride",{width,height,deviceScaleFactor:1,mobile:width<=430,screenWidth:width,screenHeight:height});await evaluate(cdp,"window.scrollTo(0,0)")}
+async function viewport(cdp,width,height,mobile=width<=430){await cdp.send("Emulation.setDeviceMetricsOverride",{width,height,deviceScaleFactor:1,mobile,screenWidth:width,screenHeight:height});await cdp.send("Emulation.setTouchEmulationEnabled",{enabled:mobile,maxTouchPoints:mobile?5:1});await evaluate(cdp,"window.scrollTo(0,0)")}
 async function screenshot(cdp,name){const result=await cdp.send("Page.captureScreenshot",{format:"png",fromSurface:true});const target=path.join(outputDir,name);fs.writeFileSync(target,Buffer.from(result.data,"base64"));return target}
 async function key(cdp,keyName,options={}){const codes={Tab:["Tab",9],Enter:["Enter",13],Escape:["Escape",27],PageDown:["PageDown",34]};const [code,vk]=codes[keyName]||[keyName,0];const text=keyName==="Enter"?"\r":"";await cdp.send("Input.dispatchKeyEvent",{type:"keyDown",key:keyName,code,windowsVirtualKeyCode:vk,nativeVirtualKeyCode:vk,text,unmodifiedText:text,modifiers:options.shiftKey?8:0});await cdp.send("Input.dispatchKeyEvent",{type:"keyUp",key:keyName,code,windowsVirtualKeyCode:vk,nativeVirtualKeyCode:vk,modifiers:options.shiftKey?8:0})}
 async function clickAt(cdp,x,y){await cdp.send("Input.dispatchMouseEvent",{type:"mousePressed",x,y,button:"left",clickCount:1});await cdp.send("Input.dispatchMouseEvent",{type:"mouseReleased",x,y,button:"left",clickCount:1})}
@@ -71,6 +71,55 @@ function pageCount(pdf){return (pdf.toString("latin1").match(/\/Type\s*\/Page\b/
 
 const results={automatedAt:new Date().toISOString(),browsers:{},responsive:{},keyboard:{},accessibility:{},offline:{},pdf:{},warnings:[]};
 const appUrl=pathToFileURL(appPath).href;
+
+const deviceProfiles=[
+  {id:"android-phone-small",width:360,height:800,kind:"Android phone",visualLocale:"tr"},
+  {id:"iphone-se",width:375,height:667,kind:"iOS phone"},
+  {id:"iphone-modern",width:390,height:844,kind:"iOS phone"},
+  {id:"android-phone-large",width:412,height:915,kind:"Android phone"},
+  {id:"phone-landscape",width:740,height:360,kind:"Phone landscape",visualLocale:"en"},
+  {id:"android-tablet-compact",width:600,height:960,kind:"Android tablet",visualLocale:"tr"},
+  {id:"ipad-mini",width:768,height:1024,kind:"iOS tablet",visualLocale:"tr"},
+  {id:"android-tablet",width:800,height:1280,kind:"Android tablet"},
+  {id:"ipad-air",width:820,height:1180,kind:"iOS tablet"},
+  {id:"tablet-landscape",width:1024,height:768,kind:"Tablet landscape"},
+  {id:"desktop",width:1366,height:768,kind:"Desktop",visualLocale:"en"}
+];
+const matrixSectionIds=["careDetails","rolesDetails","dutiesDetails","shoppingDetails","mealDetails","measurementDetails","weekPlanDetails","coverageDetails","loadDetails"];
+
+async function inspectDeviceMatrix(cdp){
+  results.responsive.deviceMatrix={profiles:{},sections:[...matrixSectionIds],locales:["en","tr"]};
+  for(const profile of deviceProfiles){
+    await viewport(cdp,profile.width,profile.height,profile.kind!=="Desktop");
+    const currentLanguage=await evaluate(cdp,"document.documentElement.lang");if(currentLanguage!=="en")await evaluate(cdp,"toggleLang()");
+    await evaluate(cdp,"loadExample(true)",true);
+    await evaluate(cdp,"if(state.measurements[0]&&!state.measurements[0].rows.length)addMeasurementRow(state.measurements[0].id)");
+    const profileResult={width:profile.width,height:profile.height,kind:profile.kind,locales:{}};
+    for(const locale of ["en","tr"]){
+      const activeLanguage=await evaluate(cdp,"document.documentElement.lang");if(activeLanguage!==locale)await evaluate(cdp,"toggleLang()");
+      const localeResult={sections:0};
+      for(const sectionId of matrixSectionIds){
+        await evaluate(cdp,`(()=>{collapsibleSections().forEach(item=>item.open=item.id==="${sectionId}");const target=document.getElementById("${sectionId}");const surface=target.closest("section,.result-panel")||target;surface.scrollLeft=0;target.scrollLeft=0;surface.scrollIntoView({block:"start",inline:"nearest"});window.scrollTo(0,window.scrollY)})()`);await delay(60);
+        const metrics=await evaluate(cdp,`(()=>{const viewportWidth=document.documentElement.clientWidth;const section=document.getElementById("${sectionId}");const visible=element=>element.getClientRects().length>0;const rectInfo=element=>{const rect=element.getBoundingClientRect();return {tag:element.tagName,id:element.id,className:String(element.className||""),left:Math.round(rect.left),right:Math.round(rect.right),width:Math.round(rect.width)}};const protectedByScroller=element=>{for(let parent=element.parentElement;parent&&parent!==document.body;parent=parent.parentElement){const style=getComputedStyle(parent);if(/auto|scroll/.test(style.overflowX)&&parent.scrollWidth>parent.clientWidth+1)return true}return false};const surfaces=[section,...section.querySelectorAll(".panel,.module-panel,.result-panel,.module-body,.starter-box,.compact-form,.category-card,.meal-card,.measurement-card,.day,.coverage-panel,.load")].filter(visible);const surfaceOffenders=surfaces.filter(element=>{const rect=element.getBoundingClientRect();return rect.width>0&&(rect.left<-1||rect.right>viewportWidth+1)}).map(rectInfo);const controls=[...section.querySelectorAll("button,input,select,textarea,summary")].filter(visible);const controlOffenders=controls.filter(element=>{const rect=element.getBoundingClientRect();return rect.width>0&&(rect.width>viewportWidth+1||((rect.left<-1||rect.right>viewportWidth+1)&&!protectedByScroller(element)))}).map(rectInfo);const summary=section.querySelector("summary");const summaryRect=summary?.getBoundingClientRect();const summaryChildren=summary?[...summary.children].filter(visible):[];const summaryChildOffenders=summaryChildren.filter(element=>{const rect=element.getBoundingClientRect();return rect.left<(summaryRect?.left||0)-1||rect.right>(summaryRect?.right||viewportWidth)+1}).map(rectInfo);return {viewportWidth,documentWidth:document.documentElement.scrollWidth,documentOverflow:document.documentElement.scrollWidth>viewportWidth+1,horizontalScroll:Math.round(window.scrollX),surfaceScroll:Math.round((section.closest("section,.result-panel")||section).scrollLeft),surfaceOffenders,controlOffenders,summaryChildOffenders,summaryContained:!summaryRect||(summaryRect.left>=-1&&summaryRect.right<=viewportWidth+1)}})()`);
+        assert.equal(metrics.documentOverflow,false,`${profile.id}/${locale}/${sectionId}: document overflow ${metrics.documentWidth}/${metrics.viewportWidth}`);
+        assert.deepEqual(metrics.surfaceOffenders,[],`${profile.id}/${locale}/${sectionId}: surface overflow`);
+        assert.deepEqual(metrics.controlOffenders,[],`${profile.id}/${locale}/${sectionId}: control overflow`);
+        assert.deepEqual(metrics.summaryChildOffenders,[],`${profile.id}/${locale}/${sectionId}: summary content overflow`);
+        assert.equal(metrics.summaryContained,true,`${profile.id}/${locale}/${sectionId}: summary overflow`);
+        assert.equal(metrics.horizontalScroll,0,`${profile.id}/${locale}/${sectionId}: horizontal viewport scroll`);
+        assert.equal(metrics.surfaceScroll,0,`${profile.id}/${locale}/${sectionId}: horizontal section scroll`);
+        localeResult.sections++;
+        if(profile.visualLocale===locale){
+          await screenshot(cdp,`matrix-${profile.id}-${locale}-${sectionId}.png`);
+          if(sectionId==="rolesDetails"){await evaluate(cdp,"(()=>{const element=document.getElementById('roleForm');window.scrollTo(0,window.scrollY+element.getBoundingClientRect().top)})()");await screenshot(cdp,`matrix-${profile.id}-${locale}-role-form.png`)}
+          if(sectionId==="dutiesDetails"){await evaluate(cdp,"(()=>{const element=document.getElementById('dutyList');window.scrollTo(0,window.scrollY+element.getBoundingClientRect().top)})()");await screenshot(cdp,`matrix-${profile.id}-${locale}-duty-rows.png`);await evaluate(cdp,"(()=>{const element=document.getElementById('dutyForm');window.scrollTo(0,window.scrollY+element.getBoundingClientRect().top)})()");await screenshot(cdp,`matrix-${profile.id}-${locale}-duty-form.png`)}
+        }
+      }
+      profileResult.locales[locale]=localeResult;
+    }
+    results.responsive.deviceMatrix.profiles[profile.id]=profileResult;
+  }
+}
 
 async function detailedChrome(browser){
   const cdp=await openPage(browser,appUrl);
@@ -88,12 +137,30 @@ async function detailedChrome(browser){
     await evaluate(cdp,"toggleLang()");await evaluate(cdp,"document.getElementById('planStage').scrollIntoView()");await screenshot(cdp,"chrome-mobile-390-example-plan-tr.png");
     assert.equal(await evaluate(cdp,"document.documentElement.lang"),"tr");
 
+    await evaluate(cdp,"setSectionOpen('shoppingDetails',true);document.getElementById('shoppingDetails').scrollIntoView()");await screenshot(cdp,"chrome-mobile-390-shopping-tr.png");
+    const shoppingContainment=await evaluate(cdp,`(()=>{const body=document.querySelector('#shoppingDetails .module-body').getBoundingClientRect();const selectors=['#shoppingDetails .category-card','#shoppingDetails .guide-item > *','#shoppingDetails .compact-form','#shoppingDetails .current-list','#shoppingDetails .current-item > *'];const offenders=selectors.flatMap(selector=>[...document.querySelectorAll(selector)]).filter(element=>{const rect=element.getBoundingClientRect();return rect.width>0&&(rect.left<body.left-1||rect.right>body.right+1)}).map(element=>element.className||element.tagName);return {offenders,guideDisplay:getComputedStyle(document.querySelector('#shoppingDetails .guide-item')).display,currentDisplay:getComputedStyle(document.querySelector('#shoppingDetails .current-item')).display}})()`);
+    assert.deepEqual(shoppingContainment.offenders,[]);assert.equal(shoppingContainment.guideDisplay,"grid");assert.equal(shoppingContainment.currentDisplay,"grid");
+    await evaluate(cdp,"document.querySelector('#shoppingDetails .current-list').scrollIntoView()");await screenshot(cdp,"chrome-mobile-390-shopping-current-tr.png");
+
+    await evaluate(cdp,"addMeasurementRow(state.measurements[0].id);setSectionOpen('measurementDetails',true);document.getElementById('measurementDetails').scrollIntoView()");await screenshot(cdp,"chrome-mobile-390-measurements-tr.png");
+    const measurementContainment=await evaluate(cdp,`(()=>{const body=document.querySelector('#measurementDetails .module-body').getBoundingClientRect();const selectors=['#measurementDetails .measurement-card','#measurementDetails .measurement-head > *','#measurementDetails .column-chip','#measurementDetails .measurement-entry','#measurementDetails .measurement-entry > *'];const offenders=selectors.flatMap(selector=>[...document.querySelectorAll(selector)]).filter(element=>{const rect=element.getBoundingClientRect();return rect.width>0&&(rect.left<body.left-1||rect.right>body.right+1)}).map(element=>element.className||element.tagName);return {offenders,headDisplay:getComputedStyle(document.querySelector('#measurementDetails .measurement-table thead')).display,rowDisplay:getComputedStyle(document.querySelector('#measurementDetails .measurement-entry')).display,cellDisplay:getComputedStyle(document.querySelector('#measurementDetails .measurement-entry td[data-label]')).display}})()`);
+    assert.deepEqual(measurementContainment.offenders,[]);assert.equal(measurementContainment.headDisplay,"none");assert.equal(measurementContainment.rowDisplay,"block");assert.equal(measurementContainment.cellDisplay,"grid");
+    await evaluate(cdp,"document.querySelector('#measurementDetails .measurement-entry').scrollIntoView()");await screenshot(cdp,"chrome-mobile-390-measurement-row-tr.png");
+    const mobileOverflow=await evaluate(cdp,`(()=>{const viewport=document.documentElement.clientWidth;return {viewport,scrollWidth:document.documentElement.scrollWidth,offenders:[...document.querySelectorAll('body *')].filter(element=>{const rect=element.getBoundingClientRect();return rect.width>0&&(rect.left<-1||rect.right>viewport+1)}).map(element=>({tag:element.tagName,id:element.id,className:String(element.className||''),left:Math.round(element.getBoundingClientRect().left),right:Math.round(element.getBoundingClientRect().right)})).slice(0,20)}})()`);
+    assert.equal(mobileOverflow.scrollWidth<=mobileOverflow.viewport,true,JSON.stringify(mobileOverflow,null,2));
+
     await viewport(cdp,768,900);await evaluate(cdp,"window.scrollTo(0,0)");await screenshot(cdp,"chrome-tablet-768-top-tr.png");
     await evaluate(cdp,"document.getElementById('planStage').scrollIntoView()");await screenshot(cdp,"chrome-tablet-768-example-plan-tr.png");
     assert.equal(await evaluate(cdp,"document.documentElement.scrollWidth<=document.documentElement.clientWidth"),true);
-    results.responsive.tablet768={overflow:false};
+    const tabletModules=await evaluate(cdp,"({guide:getComputedStyle(document.querySelector('#shoppingDetails .guide-item')).display,current:getComputedStyle(document.querySelector('#shoppingDetails .current-item')).display,measurementHead:getComputedStyle(document.querySelector('#measurementDetails .measurement-table thead')).display,measurementRow:getComputedStyle(document.querySelector('#measurementDetails .measurement-entry')).display,modulePadding:getComputedStyle(document.querySelector('#shoppingDetails .module-body')).paddingLeft})");
+    assert.deepEqual(tabletModules,{guide:"flex",current:"flex",measurementHead:"table-header-group",measurementRow:"table-row",modulePadding:"24px"});
+    results.responsive.tablet768={overflow:false,desktopTableLayoutPreserved:true};
 
     await viewport(cdp,1440,1000);await evaluate(cdp,"toggleLang();window.scrollTo(0,0)");await screenshot(cdp,"chrome-desktop-1440-top-en.png");
+    assert.equal(await evaluate(cdp,"getComputedStyle(document.getElementById('creatorCredit')).textAlign"),"center");
+    await evaluate(cdp,"document.querySelector('footer.creator-credit').scrollIntoView()");await screenshot(cdp,"chrome-desktop-1440-footer-en.png");
+
+    await inspectDeviceMatrix(cdp);
 
     await navigate(cdp,appUrl);await viewport(cdp,1200,900);
     await evaluate(cdp,"document.querySelector('#careDetails summary').focus()");const before=await evaluate(cdp,"document.getElementById('careDetails').open");await key(cdp,"Enter");
@@ -125,7 +192,9 @@ async function detailedChrome(browser){
       const restored=await evaluate(cdp,"collapsibleSections().forEach(item=>item.open=false);window.__printCalled=false;window.print=()=>{window.__printCalled=true};printPlan().then(()=>({called:window.__printCalled,closed:collapsibleSections().every(item=>!item.open)}))",true);
       assert.deepEqual(restored,{called:true,closed:true});
       await evaluate(cdp,"collapsibleSections().forEach(item=>item.open=true);renderPrint()");
+      await cdp.send("Emulation.setEmulatedMedia",{media:"print"});assert.equal(await evaluate(cdp,"getComputedStyle(document.querySelector('.p-foot')).textAlign"),"center");
       const printed=await cdp.send("Page.printToPDF",{printBackground:true,preferCSSPageSize:true,displayHeaderFooter:false});const bytes=Buffer.from(printed.data,"base64");
+      await cdp.send("Emulation.setEmulatedMedia",{media:"screen"});
       await evaluate(cdp,"collapsibleSections().forEach(item=>item.open=false)");assert.equal(await evaluate(cdp,"collapsibleSections().every(item=>!item.open)"),true);
       const pdfPath=path.join(outputDir,locale==="en"?"Care Plan Builder EN - current.pdf":"Bakım Planı Oluşturucu TR - current.pdf");fs.writeFileSync(pdfPath,bytes);
       const pages=pageCount(bytes);assert(pages>=1&&pages<=20);results.pdf[locale]={path:pdfPath,pages,bytes:bytes.length,allSectionsCollapsedBeforePrint:true};

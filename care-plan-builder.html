@@ -93,6 +93,7 @@
   .li-main{flex:1; min-width:0}
   .li-name{font-weight:600}
   .li-meta{font-size:12.5px; color:var(--ink-faint); font-family:"IBM Plex Mono",monospace}
+  .li-actions{display:flex; flex:none}
   .empty{color:var(--ink-faint); font-size:14px; font-style:italic; padding:14px 0;
     border-top:1px dashed var(--rule); border-bottom:1px dashed var(--rule); margin-bottom:16px}
 
@@ -185,6 +186,7 @@
   .guide-item,.current-item{display:flex; align-items:center; gap:8px; padding:7px 10px; border-bottom:1px solid #EDF0ED; font-size:13px}
   .guide-item:last-child,.current-item:last-child{border-bottom:0}
   .guide-item .item-name,.current-item .item-name{flex:1}
+  .guide-item .item-actions{display:flex; gap:0; flex:none}
   .item-note{display:block; color:var(--ink-faint); font-size:11px}
   .status-btn{border:1px solid var(--rule); background:#fff; color:var(--ink-soft); padding:3px 7px; font-size:11px; min-width:82px}
   .status-btn.low{background:var(--amber-soft); border-color:var(--amber-rule); color:var(--amber)}
@@ -234,9 +236,9 @@
   .coverage-panel .flags{margin-top:12px}
   .load .result-summary{margin-bottom:12px}
   .load details:not([open]) .result-summary{margin-bottom:0}
-  .creator-credit{margin-top:38px; padding-top:20px; border-top:1px solid var(--rule); text-align:center; color:var(--ink-soft)}
-  .creator-credit .creator-line{margin:0; font-family:"Source Serif 4",Georgia,serif; font-size:16px; font-weight:600}
-  .creator-credit .copyright{margin:3px 0 0; font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:10.5px; color:var(--ink-faint)}
+  .creator-credit{width:100%; margin-top:38px; padding-top:20px; border-top:1px solid var(--rule); text-align:center; color:var(--ink-soft)}
+  .creator-credit .creator-line{margin:0; text-align:center; font-family:"Source Serif 4",Georgia,serif; font-size:16px; font-weight:600}
+  .creator-credit .copyright{margin:3px 0 0; text-align:center; font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:10.5px; color:var(--ink-faint)}
 
   .modal-wrap{position:fixed; inset:0; background:rgba(31,46,41,.45); z-index:100;
     display:flex; align-items:center; justify-content:center; padding:20px}
@@ -274,6 +276,48 @@
     .meal-library{grid-template-columns:1fr}
     .compact-form{grid-template-columns:1fr}
     .compact-form .wide{grid-column:auto}
+    .week-panel .plan-head{flex-wrap:wrap; align-items:flex-start}
+    .week-panel .plan-head > span:first-child{flex:1 1 100%; min-width:0}
+    .week-panel .plan-head .section-toggle-tools{margin-left:auto}
+    .module-summary{flex-wrap:wrap; align-items:flex-start}
+    .module-summary h2{flex:1 1 100%; min-width:0; line-height:1.25; overflow-wrap:anywhere}
+    .module-summary .section-toggle-tools{margin-left:auto}
+    #roleList li,#dutyList li{display:grid; grid-template-columns:12px minmax(0,1fr); align-items:start; gap:7px 10px; padding:12px 0}
+    #roleList li > .swatch,#dutyList li > .swatch{grid-column:1; grid-row:1; margin-top:5px}
+    #roleList li > .li-main,#dutyList li > .li-main{grid-column:2; min-width:0; overflow-wrap:anywhere}
+    #roleList li > .li-actions,#dutyList li > .li-actions{grid-column:2; justify-self:end; min-width:0}
+    #roleForm .row > div,#dutyForm .row > div{flex:1 1 100% !important; min-width:0}
+    #shoppingDetails .module-body,#measurementDetails .module-body{padding-left:16px; padding-right:16px}
+    #shoppingDetails .category-title,#shoppingDetails .module-subhead,#shoppingDetails .hint{overflow-wrap:anywhere}
+    #shoppingDetails .guide-item{display:grid; grid-template-columns:minmax(82px,.8fr) minmax(0,1.4fr); align-items:start; gap:7px 10px; padding:10px}
+    #shoppingDetails .guide-item .status-btn{width:100%; min-width:0}
+    #shoppingDetails .guide-item .item-name{min-width:0; overflow-wrap:anywhere}
+    #shoppingDetails .guide-item .item-actions{grid-column:1/-1; justify-content:flex-end; min-width:0; padding-top:2px}
+    #shoppingDetails .current-item{display:grid; grid-template-columns:11px minmax(0,1fr); align-items:start; gap:4px 10px; padding:10px}
+    #shoppingDetails .current-item .swatch{margin-top:6px}
+    #shoppingDetails .current-item .item-name{min-width:0; overflow-wrap:anywhere}
+    #shoppingDetails .current-item .current-action{grid-column:2; justify-self:start; max-width:100%; padding-left:0; white-space:normal; text-align:left}
+    #measurementDetails .measurement-card{padding:10px}
+    #measurementDetails .measurement-head{align-items:flex-start; flex-wrap:wrap}
+    #measurementDetails .measurement-head input{flex:1 1 180px; min-width:0}
+    #measurementDetails .column-editor{display:grid; grid-template-columns:1fr}
+    #measurementDetails .column-chip{width:100%; min-width:0}
+    #measurementDetails .column-chip input{width:100%; min-width:0}
+    #measurementDetails .measurement-wrap{overflow:visible}
+    #measurementDetails .measurement-table{display:block; width:100%; min-width:0; border:0}
+    #measurementDetails .measurement-table thead{display:none}
+    #measurementDetails .measurement-table tbody{display:block; width:100%}
+    #measurementDetails .measurement-table .measurement-entry{display:block; width:100%; margin-bottom:10px; border:1px solid var(--rule); border-radius:10px; overflow:hidden; background:#fff}
+    #measurementDetails .measurement-table .measurement-entry td[data-label]{display:grid; grid-template-columns:minmax(88px,.8fr) minmax(0,1.2fr); gap:8px; align-items:center; width:100%; padding:8px 10px; border:0; border-bottom:1px solid var(--rule)}
+    #measurementDetails .measurement-table .measurement-entry td[data-label]::before{content:attr(data-label); color:var(--ink-soft); font-size:11.5px; font-weight:600; overflow-wrap:anywhere}
+    #measurementDetails .measurement-table .measurement-entry input{width:100%; min-width:0; padding:6px; border:1px solid var(--rule); border-radius:8px; background:#FBFCFB}
+    #measurementDetails .measurement-table .measurement-row-action{display:block; width:100%; padding:7px 10px; border:0; text-align:right}
+    #measurementDetails .measurement-table .measurement-empty-row{display:block; width:100%}
+    #measurementDetails .measurement-table .measurement-empty-row .empty{display:block; width:100%; padding:12px 0; border-left:0; border-right:0}
+  }
+  @media (min-width:561px) and (max-width:640px){
+    #roleForm .row > div,#dutyForm .row > div{flex:1 1 calc(50% - 6px) !important; min-width:0}
+    #dutyForm .row > div:nth-child(5){flex-basis:100% !important}
   }
   .print-only{display:none}
 
@@ -323,7 +367,7 @@
     .note{display:block; margin-top:22px; font-size:8.5pt; color:var(--ink-soft); max-width:none}
     .support-print{display:block}
     .support-print .meal-plan-print{font-size:7.5pt}
-    .p-foot{margin-top:14px; font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:8pt; color:var(--ink-faint)}
+    .p-foot{margin-top:14px; text-align:center; font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:8pt; color:var(--ink-faint)}
     .p-foot span{display:block; margin-top:2px}
     a{text-decoration:none; color:inherit}
   }
@@ -2022,12 +2066,12 @@ function renderShopping(){
     <div class="category-card"><div class="category-title">${esc(cat.name)}</div>${cat.items.map(item=>`
       <div class="guide-item"><button class="status-btn ${item.status}" onclick="cycleShoppingStatus(${item.id})">${t("shopStatus")[item.status]}</button>
       <span class="item-name">${esc(item.name)}${item.source?`<span class="item-note">${esc(item.source)}</span>`:""}</span>
-      <button class="btn-ghost" onclick="startEditShoppingItem(${item.id})">${t("edit")}</button><button class="btn-ghost del" onclick="removeShoppingItem(${item.id})">${t("remove")}</button></div>`).join("")}</div>`).join(""):`<div class="empty">${t("emptyGuide")}</div>`;
+      <span class="item-actions"><button class="btn-ghost" onclick="startEditShoppingItem(${item.id})">${t("edit")}</button><button class="btn-ghost del" onclick="removeShoppingItem(${item.id})">${t("remove")}</button></span></div>`).join("")}</div>`).join(""):`<div class="empty">${t("emptyGuide")}</div>`;
   const current=allShopItems().filter(x=>x.item.status!=="stock");
   document.getElementById("currentShoppingList").innerHTML=current.length?current.map(({cat,item})=>`
     <div class="current-item"><span class="swatch" style="background:${item.status==="needed"?"#A34A63":"#C38A20"}"></span>
     <span class="item-name">${esc(item.name)}<span class="item-note">${esc(cat.name)}${item.source?` · ${esc(item.source)}`:""}</span></span>
-    <button class="btn-ghost" onclick="markShoppingStock(${item.id})">${t("markStock")}</button></div>`).join(""):`<div class="empty">${t("emptyCurrent")}</div>`;
+    <button class="btn-ghost current-action" onclick="markShoppingStock(${item.id})">${t("markStock")}</button></div>`).join(""):`<div class="empty">${t("emptyCurrent")}</div>`;
 }
 
 /* ---------- Meal library and weekly plan ---------- */
@@ -2119,7 +2163,7 @@ function renderMeasurements(){
     <div class="measurement-card"><div class="measurement-head"><input type="text" value="${esc(table.name)}" oninput="updateMeasurementName(${table.id},this.value)" aria-label="${t("measureNameLabel")}" style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:17px"><button class="btn-ghost del" onclick="removeMeasurementTable(${table.id})">${t("removeTable")}</button></div>
     <div class="column-editor">${table.columns.map(col=>`<span class="column-chip"><input value="${esc(col.label)}" oninput="updateMeasurementColumn(${table.id},${col.id},this.value)" aria-label="${esc(col.label)}"><button class="btn-ghost del" onclick="removeMeasurementColumn(${table.id},${col.id})">×</button></span>`).join("")}
     <span class="column-chip"><input id="newColumn-${table.id}" placeholder="${t("columnNamePh")}"><button class="btn-ghost" onclick="addMeasurementColumn(${table.id})">${t("addColumn")}</button></span></div>
-    <div class="measurement-wrap"><table class="measurement-table"><thead><tr>${table.columns.map(c=>`<th>${esc(c.label)}</th>`).join("")}<th></th></tr></thead><tbody>${table.rows.length?table.rows.map(row=>`<tr>${table.columns.map(c=>`<td><input type="${c.type==="date"?"date":"text"}" value="${esc(row.values[c.id]||"")}" oninput="updateMeasurementValue(${table.id},${row.id},${c.id},this.value)"></td>`).join("")}<td><button class="btn-ghost del" onclick="removeMeasurementRow(${table.id},${row.id})">${t("deleteRow")}</button></td></tr>`).join(""):`<tr><td colspan="${table.columns.length+1}" class="empty">${t("noEntries")}</td></tr>`}</tbody></table></div>
+    <div class="measurement-wrap"><table class="measurement-table"><thead><tr>${table.columns.map(c=>`<th>${esc(c.label)}</th>`).join("")}<th></th></tr></thead><tbody>${table.rows.length?table.rows.map(row=>`<tr class="measurement-entry">${table.columns.map(c=>`<td data-label="${esc(c.label)}"><input type="${c.type==="date"?"date":"text"}" value="${esc(row.values[c.id]||"")}" aria-label="${esc(c.label)}" oninput="updateMeasurementValue(${table.id},${row.id},${c.id},this.value)"></td>`).join("")}<td class="measurement-row-action"><button class="btn-ghost del" onclick="removeMeasurementRow(${table.id},${row.id})">${t("deleteRow")}</button></td></tr>`).join(""):`<tr class="measurement-empty-row"><td colspan="${table.columns.length+1}" class="empty">${t("noEntries")}</td></tr>`}</tbody></table></div>
     <button class="btn" style="margin-top:9px" onclick="addMeasurementRow(${table.id})">${t("addRow")}</button></div>`).join("");
 }
 
@@ -2143,8 +2187,8 @@ function render(){
         <span class="li-name">${esc(r.name)}</span>${r.person?` <span style="color:var(--ink-soft)">· ${esc(r.person)}</span>`:""}
         <span class="li-meta">${off}${r.note?` — ${esc(r.note)}`:""}${standby}</span>
       </span>
-      <button class="btn-ghost" onclick="startEditRole(${r.id})">${t("edit")}</button>
-      <button class="btn-ghost del" onclick="removeRole(${r.id})">${t("remove")}</button></li>`;
+      <span class="li-actions"><button class="btn-ghost" onclick="startEditRole(${r.id})">${t("edit")}</button>
+      <button class="btn-ghost del" onclick="removeRole(${r.id})">${t("remove")}</button></span></li>`;
   }).join("");
   document.getElementById("roleEmpty").hidden = state.roles.length > 0;
 
@@ -2180,8 +2224,8 @@ function render(){
       <span class="li-main"><span class="li-name">${esc(d.name)}</span>
         <span class="li-meta">${when}${d.time?" — "+esc(d.time):""} — ${r?esc(r.name):t("unassigned").toLocaleLowerCase(lang==="tr"?"tr":"en")}${cr?` — ${t("coverMeta")(esc(cr.name))}`:""}<br>${effort}</span>
       </span>
-      <button class="btn-ghost" onclick="startEditDuty(${d.id})">${t("edit")}</button>
-      <button class="btn-ghost del" onclick="removeDuty(${d.id})">${t("remove")}</button></li>`;
+      <span class="li-actions"><button class="btn-ghost" onclick="startEditDuty(${d.id})">${t("edit")}</button>
+      <button class="btn-ghost del" onclick="removeDuty(${d.id})">${t("remove")}</button></span></li>`;
   }).join("");
   document.getElementById("dutyEmpty").hidden = state.duties.length > 0;
 

@@ -17,7 +17,7 @@ The complete suite is run once in English and once in Turkish, followed by cross
 9. Neutral shopping categories, bilingual care-specific opt-in prompts, custom categories, item editing and category moves, all stock states and current list.
 10. Non-writing meal prompts, meal editing, shopping integration and all weekly meal slots.
 11. Unlimited predefined and explicitly custom measurement tables, date picker, editable titles, columns, rows and values.
-12. Complete anonymized example plan plus repeated whole-state language switching after edits, including offline manual meal and ingredient terms.
+12. Complete fictionalized example plan, explicit bilingual privacy disclosure and regression checks against former household details, plus repeated whole-state language switching after edits, including offline manual meal and ingredient terms.
 13. JSON export/import, strict field whitelisting, safe regenerated IDs, hostile/malformed/oversized files and legacy migration.
 14. Standards-mode doctype, complete CSS variables, accessible colour contrast, font/license metadata and public-name consistency.
 15. Web and PDF creator credit, copyright, A4 print layout, footer branding, colours and wrapping.

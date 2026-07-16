@@ -58,12 +58,12 @@ const ALL = [0,1,2,3,4,5,6];
 const WEEKDAYS = [0,1,2,3,4];
 const USER_ENTRY_GLOSSARY = evaluateObject(/const USER_ENTRY_GLOSSARY = (\[[\s\S]*?\n\]);\n\nconst BASICS/, "USER_ENTRY_GLOSSARY", {B});
 
-const templateMatch = html.match(/const BASICS = ([\s\S]*?)\n\n\/\* ---------- The example plan/);
+const templateMatch = html.match(/const BASICS = ([\s\S]*?)\n\n\/\* ---------- A fictionalized example/);
 assert(templateMatch, "Template data block is missing");
 const templateData = Function("B", "ALL", "WEEKDAYS", `const BASICS = ${templateMatch[1]}; return {BASICS,TYPES,SUPPORT_STARTERS};`)(B, ALL, WEEKDAYS);
 const {BASICS, TYPES, SUPPORT_STARTERS} = templateData;
 
-const EXAMPLE = evaluateObject(/const EXAMPLE = ([\s\S]*?\n\};)\n\n\/\* Household reference/, "EXAMPLE", {B, ALL});
+const EXAMPLE = evaluateObject(/const EXAMPLE = ([\s\S]*?\n\};)\n\n\/\* Fictionalized reference/, "EXAMPLE", {B, ALL});
 const EXAMPLE_SUPPORT = evaluateObject(/const EXAMPLE_SUPPORT = ([\s\S]*?\n\});\n\nconst emptyMealPlan/, "EXAMPLE_SUPPORT", {B});
 
 const workloadMatch = script.match(/const DURATION_OPTIONS = ([\s\S]*?\n}\n)function buildEffortOptions/);
@@ -248,11 +248,11 @@ test("example workload durations survive normalisation", () => {
   assert.deepEqual(unsupported, [], `These example durations are silently replaced during rendering: ${unsupported.join(", ")}`);
 });
 
-test("example coverage answers are all present", () => {
+test("fictionalized example coverage answers are all present", () => {
   const coveredNames = [
-    "Morning medicine","Breakfast and morning medication","Lunch, kefir and vitamins",
-    "Fruit and cinnamon milk","Dinner and evening medication","Oxygen reading before bed",
-    "Blood pressure, morning and evening"
+    "Morning medication reminder","Breakfast and medication reminder","Lunch and supplements",
+    "Afternoon snack","Dinner and medication reminder","Evening wellness check",
+    "Morning and evening health check"
   ];
   for (const name of coveredNames){
     const duty = EXAMPLE.duties.find(item => item.name.en === name);
@@ -261,10 +261,10 @@ test("example coverage answers are all present", () => {
   }
 });
 
-test("new care-manager workload duties have exact settings", () => {
+test("fictionalized care-manager workload duties have exact settings", () => {
   const expected = [
-    ["Budget management","Bütçe yönetimi",120],
-    ["Coordination with agencies (for helpers)","Yardımcılar için kurumlarla koordinasyon",180]
+    ["Budget management","Bütçe yönetimi",90],
+    ["Coordination with support services","Destek hizmetleriyle koordinasyon",120]
   ];
   for (const [en,tr,minutes] of expected){
     const duty = EXAMPLE.duties.find(item => item.name.en === en);
@@ -275,6 +275,20 @@ test("new care-manager workload duties have exact settings", () => {
     assert.equal(duty.intensity, "demanding");
     assert.equal(duty.category, "planning");
     assert.equal(duty.ongoing, true);
+  }
+});
+
+test("example plan is explicitly fictionalized and excludes former identifying details", () => {
+  assert.equal(EXAMPLE.recipient.en, "My Grandparent");
+  assert.equal(EXAMPLE.recipient.tr, "Büyükannem/Büyükbabam");
+  assert.equal(EXAMPLE_SUPPORT.measurements[0].name.en, "Example health measurements");
+  assert.equal(EXAMPLE_SUPPORT.measurements[0].name.tr, "Örnek sağlık ölçümleri");
+  assert.match(I18N.en.exampleNotice, /fictionalized example household/i);
+  assert.match(I18N.tr.exampleNotice, /kurgulanmış bir örnek hane/i);
+  assert.match(readme, /fictionalized composite household/i);
+  assert.match(readme, /kurgulanmış bileşik bir hane/i);
+  for (const formerDetail of ["My Grandmother", "Local butcher", "real household"]){
+    assert(!html.includes(formerDetail), `Former example detail remains in HTML: ${formerDetail}`);
   }
 });
 

@@ -2,7 +2,7 @@
 
 Date: 16 July 2026  
 Production file: `care-plan-builder.html`  
-SHA-256: `85F940F2DBE67663E424F1EE63FE3BF57E39F6146366D124697D94BD84570BC9`
+SHA-256: `A15222555E253B029FFF15BB90FCFA89B5FC1EA17E01B9C9C633D3BCA111C741`
 
 This report covers the exact HTML build identified above. The automated suites, real-browser checks and bilingual PDFs were regenerated after the final standards, security, accessibility, documentation and heading title-case changes.
 
@@ -10,10 +10,10 @@ This report covers the exact HTML build identified above. The automated suites, 
 
 | Suite | Passed | Failed | Status |
 |---|---:|---:|---|
-| Static, data, translation, privacy, security and regression checks | 46 | 0 | Passed |
+| Static, data, translation, privacy, security and regression checks | 47 | 0 | Passed |
 | English and Turkish functional simulation | 57 | 0 | Passed |
 | Staged first-open experience | 6 | 0 | Passed |
-| Automated total | 109 | 0 | Passed |
+| Automated total | 110 | 0 | Passed |
 | Chrome release browser check | 1 | 0 | Passed |
 | Edge release browser check | 1 | 0 | Passed |
 | English PDF pages visually inspected | 7 | 0 | Passed |
@@ -23,7 +23,8 @@ This report covers the exact HTML build identified above. The automated suites, 
 
 - The document uses `<!doctype html>` and standards mode.
 - Static browser and Open Graph titles use **Care Plan Builder** title case.
-- Section and plan headings follow standard title case in both languages: the first and last words are capitalized and internal minor words stay lowercase (English `for`/`the`/`and`/`of`, Turkish `ve`/`için`). Care-option labels keep every word capitalized. The heading test enforces this convention.
+- Section and plan headings, care-option labels and titled controls follow standard title case in both languages: the first and last words are capitalized and internal minor words stay lowercase (English `for`/`the`/`and`/`of`, Turkish `ve`/`ya da`/`için`). The heading test enforces this convention.
+- The bilingual example is explicitly identified as a fictionalized composite household. Its recipient, schedules, duties, shopping guide, meals and blank measurement design are generic, deliberately altered and protected by regression checks against former household details.
 - Every CSS custom property is defined, including `--mint`.
 - Small faint text and amber notice text meet WCAG AA contrast for their tested backgrounds.
 - The MIT copyright owner and embedded font list match the chosen public name and current fonts.
@@ -64,10 +65,10 @@ These are browser viewport emulations, not physical-device tests. A brief real-p
 
 ## Accessibility Audit
 
-The current example plan was inspected through Chrome's accessibility tree with all sections open.
+The current fictionalized example plan was inspected through Chrome's accessibility tree with all sections open.
 
-- 328 visible interactive controls were found.
-- All 328 had accessible names.
+- 356 visible interactive controls were found.
+- All 356 had accessible names.
 - Main, header and footer landmarks were present.
 - The page language was exposed as English during the audit and continues to switch with the interface language.
 - One defect was found and corrected during testing: the 21 weekly meal-planner dropdowns now receive bilingual day-and-meal accessible names.
@@ -80,8 +81,8 @@ This provides a useful screen-reader semantic proxy, but it is not a substitute 
 
 Fresh PDFs were created from the exact release build after loading the complete example plan and closing every screen section first. The test confirmed that printing temporarily opened every section, rendered the complete plan and restored the collapsed screen state afterward.
 
-- English: 7 A4 pages, 427,222 bytes.
-- Turkish: 7 A4 pages, 457,587 bytes.
+- English: 7 A4 pages, 437,247 bytes.
+- Turkish: 7 A4 pages, 472,608 bytes.
 - Browser-generated headers and footers were disabled.
 - All 14 pages were opened in Chrome's PDF viewer and visually inspected.
 - No content clipping, overlap, distorted glyphs or broken table continuation was found.

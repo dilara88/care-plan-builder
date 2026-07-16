@@ -612,7 +612,7 @@ en: {
   toolbarNote: "The PDF is the copy you print, pin to the fridge, or send to the family. Nothing is kept when this page closes — to come back to a plan later, save a backup file first. The backup is only for reopening the plan here; it isn't meant to be read by a person.",
   startSelect: "Select who is being cared for to start a new plan.",
   startExample: "Select “Show the example plan” to explore a completed household example.",
-  exampleNotice: "You are viewing an example household. Select a care option above whenever you are ready to start your own plan.",
+  exampleNotice: "You are viewing a fictionalized example household. Its roles, schedules, meals and care-related tasks have been altered and do not describe any person or household. Select a care option above whenever you are ready to start your own plan.",
   s1Head: "Who You're Caring For",
   s1Hint: "This only sets a starting draft. Every role and duty it suggests can be renamed, reassigned or deleted, and you can add your own. If none fit your household — and that is completely normal — the last option is yours to name.",
   recipLabel: "What should we call them?",
@@ -803,7 +803,7 @@ tr: {
   toolbarNote: "PDF; yazdırdığınız, buzdolabına astığınız ya da aileyle paylaştığınız kopyadır. Bu sayfa kapandığında hiçbir şey saklanmaz — plana daha sonra dönmek isterseniz önce bir yedek dosyası kaydedin. Yedek dosyası yalnızca planı buraya geri yüklemek içindir; insanların okuması için değildir.",
   startSelect: "Yeni bir plan başlatmak için kime bakım verildiğini seçin.",
   startExample: "Tamamlanmış bir hane örneğini incelemek için “Örnek planı göster”i seçin.",
-  exampleNotice: "Şu anda örnek bir haneyi görüntülüyorsunuz. Kendi planınızı başlatmaya hazır olduğunuzda yukarıdan bir bakım seçeneği belirleyin.",
+  exampleNotice: "Şu anda kurgulanmış bir örnek haneyi görüntülüyorsunuz. Roller, programlar, yemekler ve bakımla ilgili görevler değiştirilmiştir; herhangi bir kişiyi veya haneyi anlatmaz. Kendi planınızı başlatmaya hazır olduğunuzda yukarıdan bir bakım seçeneği belirleyin.",
   s1Head: "Kime Bakıyorsunuz",
   s1Hint: "Bu yalnızca bir başlangıç taslağı oluşturur. Önerilen her rol ve görev yeniden adlandırılabilir, devredilebilir ya da silinebilir; kendinizinkini de ekleyebilirsiniz. Hiçbiri hanenize uymuyorsa — ki bu tamamen normaldir — son seçeneği siz adlandırın.",
   recipLabel: "Ona ne diyelim?",
@@ -1036,7 +1036,7 @@ const B = (en, tr) => ({en, tr});
    matched before individual words, so entries such as ingredient lists can be
    translated while remaining entirely inside the page. */
 const USER_ENTRY_GLOSSARY = [
-  B("Meatballs","Köfte"), B("Potatoes","Patates"), B("Chicken","Tavuk"),
+  B("Meatballs","Köfte"), B("Ground meat","Kıyma"), B("Potatoes","Patates"), B("Chicken","Tavuk"),
   B("Fish","Balık"), B("Beef","Dana eti"), B("Lamb","Kuzu eti"),
   B("Spinach","Ispanak"), B("Zucchini","Kabak"), B("Carrots","Havuç"),
   B("Garlic","Sarımsak"), B("Flour","Un"), B("Sugar","Şeker"),
@@ -1139,7 +1139,7 @@ const TYPES = {
     label:B("Older Adult","Yaşlı Bir Yakın"),
     blurb:B("An ageing parent or grandparent. A steady daily rhythm, regular measurements.",
             "Yaşlanan bir anne-baba ya da büyükanne-büyükbaba. Düzenli bir günlük ritim, düzenli ölçümler."),
-    recipient:B("My Grandmother","Büyükannem"),
+    recipient:B("My Grandparent","Büyükannem/Büyükbabam"),
     roles:[
       {name:B("Household manager","Hane sorumlusu"),off:[]},
       {name:B("Live-in caregiver","Yatılı bakıcı"),off:[3]},
@@ -1347,122 +1347,123 @@ const SUPPORT_STARTERS = {
   }
 };
 
-/* ---------- The example plan — a real household's week, anonymized.
-   The tool grew out of it: a grandmother cared for at home by a family
-   care manager, a live-in caregiver, a twice-a-week helper, a family
-   medication lead, and a visiting physiotherapist. ---------- */
+/* ---------- A fictionalized example inspired by caregiving experience.
+   Its roles, schedules, meals and care-related tasks have been deliberately
+   altered and do not describe any person or household. ---------- */
 const EXAMPLE = {
-  recipient: B("My Grandmother","Büyükannem"),
+  recipient: B("My Grandparent","Büyükannem/Büyükbabam"),
   roles: [
     {name:B("Care manager","Bakım sorumlusu"), off:[],
      note:B("Budget, household admin, meal planning","Bütçe, evin idaresi, yemek planlaması")},
-    {name:B("Live-in caregiver","Yatılı bakıcı"), off:[3], standby:true,
-     note:B("Leaves Wed evening, back Thu afternoon","Çarşamba akşamı çıkar, Perşembe öğleden sonra döner")},
-    {name:B("Second helper","İkinci yardımcı"), off:[1,2,4,5,6],
-     note:B("Comes Mondays and Thursdays","Pazartesi ve Perşembe günleri gelir")},
+    {name:B("Live-in caregiver","Yatılı bakıcı"), off:[0], standby:true,
+     note:B("Leaves Sunday evening, back Monday afternoon","Pazar akşamı çıkar, Pazartesi öğleden sonra döner")},
+    {name:B("Second helper","İkinci yardımcı"), off:[1,2,3,4,6],
+     note:B("Comes Mondays and Saturdays","Pazartesi ve Cumartesi günleri gelir")},
     {name:B("Medication lead","İlaç sorumlusu"), off:[],
      note:B("Arranges medication and collects prescriptions","İlaçları düzenler, reçeteleri alır")},
-    {name:B("Physiotherapist","Fizyoterapist"), off:[0,2,5,6],
-     note:B("Home sessions Tuesday and Friday","Salı ve cuma günleri evde seans yapar")}
+    {name:B("Visiting therapist","Eve gelen terapist"), off:[0,1,3,4,6],
+     note:B("Home sessions Wednesday and Saturday","Çarşamba ve Cumartesi günleri evde seans yapar")}
   ],
   duties: [
-    {name:B("Morning medicine","Sabah ilacı"),                             r:1, t:"07:30", days:ALL, every:true, cover:0, minutes:15, intensity:"attention", category:"medical"},
-    {name:B("Breakfast and morning medication","Kahvaltı ve sabah ilaçları"), r:1, t:"09:45", days:ALL, every:true, cover:2, minutes:45, intensity:"attention", category:"direct"},
-    {name:B("Lunch, kefir and vitamins","Öğle yemeği, kefir ve vitaminler"), r:1, t:"13:00", days:ALL, every:true, cover:2, minutes:45, intensity:"attention", category:"direct"},
-    {name:B("Fruit and cinnamon milk","Meyve ve tarçınlı süt"),            r:1, t:"16:00", days:ALL, every:true, cover:2, minutes:15, intensity:"routine", category:"direct"},
-    {name:B("Dinner and evening medication","Akşam yemeği ve akşam ilaçları"), r:1, t:"19:00", days:ALL, every:true, cover:0, minutes:45, intensity:"attention", category:"direct"},
-    {name:B("Blood pressure, morning and evening","Tansiyon, sabah ve akşam"), r:1, t:"", days:ALL, every:true, cover:0, minutes:20, intensity:"attention", category:"medical"},
-    {name:B("Oxygen reading before bed","Yatmadan önce oksijen ölçümü"),   r:1, t:"21:30", days:ALL, every:true, cover:0, minutes:10, intensity:"attention", category:"medical"},
-    {name:B("Deep cleaning and laundry","Detaylı temizlik ve çamaşır"),    r:2, t:"", days:[0,3], minutes:180, intensity:"demanding", category:"household"},
-    {name:B("Physiotherapy session","Fizyoterapi seansı"),                 r:4, t:"11:00 – 12:00", days:[1,4], minutes:60, intensity:"demanding", category:"appointments"},
-    {name:B("Ironing, after the laundry","Ütü, çamaşırdan sonra"),         r:1, t:"", days:[1,4], minutes:60, intensity:"routine", category:"household"},
-    {name:B("Cooking","Yemek pişirme"),                                    r:1, t:"", days:[1,2,4,6], minutes:90, intensity:"attention", category:"household"},
-    {name:B("Meal prep","Yemek ön hazırlığı"),                             r:0, t:"", days:[2,6], minutes:90, intensity:"attention", category:"planning"},
-    {name:B("Blood sugar","Kan şekeri ölçümü"),                            r:1, t:"", days:[1,4], minutes:15, intensity:"attention", category:"medical"},
-    {name:B("Fill the weekly pill box","Haftalık ilaç kutusunu doldurma"), r:3, t:"", days:[1], minutes:45, intensity:"demanding", category:"medical"},
-    {name:B("Plan meals and send recipes","Yemekleri planlayıp tarifleri gönderme"), r:0, t:"", days:[6], minutes:60, intensity:"attention", category:"planning"},
-    {name:B("Order groceries and supplies","Market alışverişi ve diğer ihtiyaçların siparişi"), r:0, t:"", days:[2,5], minutes:30, intensity:"routine", category:"planning"},
-    {name:B("Budget management","Bütçe yönetimi"),                        r:0, t:"", days:[], ongoing:true, minutes:120, intensity:"demanding", category:"planning"},
-    {name:B("Coordination with agencies (for helpers)","Yardımcılar için kurumlarla koordinasyon"), r:0, t:"", days:[], ongoing:true, minutes:180, intensity:"demanding", category:"planning"},
-    {name:B("Bath with support","Destekle banyo"),                         r:1, t:"", days:[5], minutes:45, intensity:"demanding", category:"direct"},
-    {name:B("Light vacuuming","Hafif süpürme"),                            r:1, t:"", days:[5], minutes:30, intensity:"routine", category:"household"},
-    {name:B("Caregiver's own laundry","Bakıcının kendi çamaşırı"),         r:1, t:"", days:[5], minutes:90, intensity:"routine", category:"household"},
+    {name:B("Morning medication reminder","Sabah ilaç hatırlatıcısı"), r:1, t:"08:15", days:ALL, every:true, cover:0, minutes:15, intensity:"attention", category:"medical"},
+    {name:B("Breakfast and medication reminder","Kahvaltı ve ilaç hatırlatıcısı"), r:1, t:"10:15", days:ALL, every:true, cover:2, minutes:45, intensity:"attention", category:"direct"},
+    {name:B("Lunch and supplements","Öğle yemeği ve destek ürünleri"), r:1, t:"13:30", days:ALL, every:true, cover:2, minutes:45, intensity:"attention", category:"direct"},
+    {name:B("Afternoon snack","İkindi atıştırması"), r:1, t:"16:30", days:ALL, every:true, cover:2, minutes:15, intensity:"routine", category:"direct"},
+    {name:B("Dinner and medication reminder","Akşam yemeği ve ilaç hatırlatıcısı"), r:1, t:"19:30", days:ALL, every:true, cover:0, minutes:45, intensity:"attention", category:"direct"},
+    {name:B("Morning and evening health check","Sabah ve akşam sağlık kontrolü"), r:1, t:"", days:ALL, every:true, cover:0, minutes:20, intensity:"attention", category:"medical"},
+    {name:B("Evening wellness check","Akşam genel durum kontrolü"), r:1, t:"22:00", days:ALL, every:true, cover:0, minutes:10, intensity:"attention", category:"direct"},
+    {name:B("Deep cleaning and laundry","Detaylı temizlik ve çamaşır"), r:2, t:"", days:[0,5], minutes:120, intensity:"demanding", category:"household"},
+    {name:B("Home therapy session","Evde terapi seansı"), r:4, t:"14:00 – 15:00", days:[2,5], minutes:60, intensity:"demanding", category:"appointments"},
+    {name:B("Ironing, after the laundry","Ütü, çamaşırdan sonra"), r:1, t:"", days:[1,6], minutes:60, intensity:"routine", category:"household"},
+    {name:B("Cooking","Yemek pişirme"), r:1, cover:0, t:"", days:[0,2,4,6], minutes:90, intensity:"attention", category:"household"},
+    {name:B("Meal prep","Yemek ön hazırlığı"), r:0, t:"", days:[1,5], minutes:90, intensity:"attention", category:"planning"},
+    {name:B("Twice-weekly health measurement","Haftada iki kez sağlık ölçümü"), r:1, t:"", days:[2,6], minutes:15, intensity:"attention", category:"medical"},
+    {name:B("Prepare the weekly medication organiser","Haftalık ilaç düzenleyicisini hazırlama"), r:3, t:"", days:[4], minutes:45, intensity:"demanding", category:"medical"},
+    {name:B("Plan meals and share recipes","Yemekleri planlayıp tarifleri paylaşma"), r:0, t:"", days:[5], minutes:60, intensity:"attention", category:"planning"},
+    {name:B("Order groceries and supplies","Market alışverişi ve diğer ihtiyaçların siparişi"), r:0, t:"", days:[1,5], minutes:30, intensity:"routine", category:"planning"},
+    {name:B("Budget management","Bütçe yönetimi"), r:0, t:"", days:[], ongoing:true, minutes:90, intensity:"demanding", category:"planning"},
+    {name:B("Coordination with support services","Destek hizmetleriyle koordinasyon"), r:0, t:"", days:[], ongoing:true, minutes:120, intensity:"demanding", category:"planning"},
+    {name:B("Bath with support","Destekle banyo"), r:1, t:"", days:[4], minutes:45, intensity:"demanding", category:"direct"},
+    {name:B("Light vacuuming","Hafif süpürme"), r:1, t:"", days:[3], minutes:30, intensity:"routine", category:"household"},
+    {name:B("Caregiver's own laundry","Bakıcının kendi çamaşırı"), r:1, t:"", days:[6], minutes:90, intensity:"routine", category:"household"},
     {name:B("Running grocery list — whoever notices, adds","Ortak alışveriş listesi — gören ekler"), r:1, cover:0, t:"", days:[], ongoing:true, minutes:30, intensity:"attention", category:"planning"},
-    {name:B("Collect prescriptions from the doctor","Doktordan reçeteleri alma"), r:3, t:"", days:[], ongoing:true, minutes:60, intensity:"attention", category:"medical"}
+    {name:B("Collect prescriptions","Reçeteleri alma"), r:3, t:"", days:[], ongoing:true, minutes:45, intensity:"attention", category:"medical"}
   ]
 };
 
-/* Household reference modules for the anonymized example. The measurement
-   table deliberately contains structure only: no person, dates, readings,
-   medication details, or other personal information. */
+/* Fictionalized reference modules. The measurement table deliberately contains
+   structure only: no person, dates, readings, medication details, or other
+   personal information. */
 const EXAMPLE_SUPPORT = {
   shopping: [
-    {name:B("Breakfast","Kahvaltılıklar"),items:[
-      {name:B("White cheese","Beyaz peynir"),status:"stock"},{name:B("Bread","Ekmek"),status:"stock"},
-      {name:B("Tomatoes","Domates"),status:"low"},{name:B("Cucumber","Salatalık"),status:"stock"},
-      {name:B("Eggs","Yumurta"),status:"needed"},{name:B("Olives","Zeytin"),status:"stock"},
-      {name:B("Walnuts","Ceviz"),status:"stock"},{name:B("Tea","Çay"),status:"stock"}
+    {name:B("Breakfast basics","Kahvaltı temel ürünleri"),items:[
+      {name:B("Oats","Yulaf ezmesi"),status:"stock"},{name:B("Whole-grain bread","Tam tahıllı ekmek"),status:"low"},
+      {name:B("Eggs","Yumurta"),status:"needed"},{name:B("Yogurt","Yoğurt"),status:"stock"},
+      {name:B("Bananas","Muz"),status:"low"},{name:B("Apples","Elma"),status:"stock"},
+      {name:B("Herbal tea","Bitki çayı"),status:"stock"},{name:B("Peanut butter","Fıstık ezmesi"),status:"stock"}
     ]},
-    {name:B("Cooking ingredients","Yemek malzemeleri"),items:[
-      {name:B("Olive oil","Zeytinyağı"),status:"stock"},{name:B("Butter","Tereyağı"),status:"stock"},
-      {name:B("Tomato paste","Domates salçası"),status:"stock"},{name:B("Onions","Kuru soğan"),status:"stock"},
-      {name:B("Ground meat","Kıyma"),source:B("Local butcher","Kasap"),status:"stock"},
-      {name:B("Seasonal vegetables","Mevsim sebzeleri"),status:"stock"}
+    {name:B("Pantry","Kiler"),items:[
+      {name:B("Lentils","Mercimek"),status:"low"},{name:B("Chickpeas","Nohut"),status:"stock"},
+      {name:B("Rice","Pirinç"),status:"stock"},{name:B("Pasta","Makarna"),status:"stock"},
+      {name:B("Tomato puree","Domates püresi"),status:"stock"},{name:B("Onions","Kuru soğan"),status:"stock"},
+      {name:B("Sunflower oil","Ayçiçek yağı"),status:"stock"},{name:B("Vegetable stock","Sebze suyu"),status:"needed"}
     ]},
-    {name:B("With meals","Yemeklerin Yanında"),items:[
-      {name:B("Kefir","Kefir"),status:"needed"},{name:B("Yogurt","Yoğurt"),status:"stock"},
-      {name:B("Salad greens","Salata yeşillikleri"),status:"stock"}
+    {name:B("Fresh and frozen produce","Taze ve dondurulmuş ürünler"),items:[
+      {name:B("Frozen vegetables","Dondurulmuş sebzeler"),status:"stock"},{name:B("Carrots","Havuç"),status:"stock"},
+      {name:B("Courgettes","Kabak"),status:"needed"},{name:B("Salad greens","Salata yeşillikleri"),status:"low"},
+      {name:B("Lemons","Limon"),status:"stock"},{name:B("Potatoes","Patates"),status:"stock"}
     ]},
-    {name:B("Snacks","Atıştırmalık"),items:[
-      {name:B("Milk","Süt"),status:"stock"},{name:B("Fruit","Meyve"),status:"stock"},
-      {name:B("Cinnamon","Tarçın"),status:"stock"},{name:B("Herbal tea","Bitki çayı"),status:"stock"}
+    {name:B("Drinks","İçecekler"),items:[
+      {name:B("Milk","Süt"),status:"stock"},{name:B("Sparkling water","Maden suyu"),status:"stock"},
+      {name:B("Decaffeinated tea","Kafeinsiz çay"),status:"stock"},{name:B("Coffee","Kahve"),status:"low"},
+      {name:B("Fruit juice","Meyve suyu"),status:"stock"}
     ]},
-    {name:B("Dry goods","Bakliyat ve kuru malzemeler"),items:[
-      {name:B("Basmati rice","Basmati pirinç"),status:"stock"},{name:B("Bulgur","Bulgur"),status:"stock"},
-      {name:B("Red lentils","Kırmızı mercimek"),status:"low"},{name:B("Chickpeas","Nohut"),status:"stock"},
-      {name:B("Pasta","Makarna"),status:"stock"}
+    {name:B("Snacks","Atıştırmalıklar"),items:[
+      {name:B("Crackers","Kraker"),status:"stock"},{name:B("Dried fruit","Kuru meyve"),status:"stock"},
+      {name:B("Nuts","Kuruyemiş"),status:"low"},{name:B("Rice cakes","Pirinç patlağı"),status:"stock"},
+      {name:B("Fruit cups","Meyve kaseleri"),status:"needed"}
     ]},
-    {name:B("Frozen vegetables","Buzlu sebzeler"),items:[
-      {name:B("Peas","Bezelye"),status:"stock"},{name:B("Okra","Bamya"),status:"stock"}
+    {name:B("Household essentials","Temel ev ihtiyaçları"),items:[
+      {name:B("Paper towels","Havlu kâğıt"),status:"needed"},{name:B("Toilet paper","Tuvalet kâğıdı"),status:"stock"},
+      {name:B("Laundry detergent","Çamaşır deterjanı"),status:"stock"},{name:B("Surface cleaner","Yüzey temizleyici"),status:"stock"},
+      {name:B("Bin bags","Çöp poşeti"),status:"low"},{name:B("Cleaning gloves","Temizlik eldiveni"),status:"stock"}
     ]},
-    {name:B("Cleaning and personal care","Temizlik ve kişisel bakım"),items:[
-      {name:B("Soap","Sabun"),status:"stock"},{name:B("Wet wipes","Islak mendil"),status:"stock"},
-      {name:B("Paper towels","Havlu kağıt"),status:"needed"},{name:B("Toilet paper","Tuvalet kağıdı"),status:"stock"},
-      {name:B("Laundry detergent","Çamaşır deterjanı"),status:"stock"},{name:B("Shampoo","Şampuan"),status:"stock"},
-      {name:B("Toothpaste","Diş macunu"),status:"stock"},{name:B("Cleaning gloves","Temizlik eldiveni"),status:"low"},
-      {name:B("Surface cleaner","Yüzey temizleyici"),status:"stock"}
+    {name:B("Personal care","Kişisel bakım"),items:[
+      {name:B("Soap","Sabun"),status:"stock"},{name:B("Shampoo","Şampuan"),status:"stock"},
+      {name:B("Toothpaste","Diş macunu"),status:"low"},{name:B("Wet wipes","Islak mendil"),status:"stock"},
+      {name:B("Hand cream","El kremi"),status:"needed"}
     ]}
   ],
   meals: [
-    {key:"breakfast",name:B("Breakfast plate","Kahvaltı tabağı"),ingredients:B("White cheese, Bread, Tomatoes, Cucumber, Eggs, Olives, Walnuts","Beyaz peynir, Ekmek, Domates, Salatalık, Yumurta, Zeytin, Ceviz"),notes:B("A familiar balanced breakfast","Alışılmış dengeli bir kahvaltı")},
-    {key:"lentil",name:B("Red lentil soup","Kırmızı mercimek çorbası"),ingredients:B("Red lentils, Onions, Tomato paste, Olive oil","Kırmızı mercimek, Kuru soğan, Domates salçası, Zeytinyağı"),notes:B("Prepare with the household's usual seasoning","Hanenin alışılmış baharatlarıyla hazırlanabilir")},
-    {key:"vegetable",name:B("Vegetable stew with ground meat","Kıymalı sebze yemeği"),ingredients:B("Ground meat, Seasonal vegetables, Onions, Tomato paste, Olive oil","Kıyma, Mevsim sebzeleri, Kuru soğan, Domates salçası, Zeytinyağı"),notes:B("Serve with yogurt or salad","Yoğurt veya salatayla servis edilebilir")},
-    {key:"chickpea",name:B("Chickpea stew with rice","Pirinç pilavlı nohut"),ingredients:B("Chickpeas, Onions, Tomato paste, Basmati rice","Nohut, Kuru soğan, Domates salçası, Basmati pirinç"),notes:""},
-    {key:"okra",name:B("Okra with yogurt","Yoğurtlu bamya"),ingredients:B("Okra, Onions, Tomato paste, Olive oil, Yogurt","Bamya, Kuru soğan, Domates salçası, Zeytinyağı, Yoğurt"),notes:""},
-    {key:"bulgur",name:B("Vegetable bulgur pilaf","Sebzeli bulgur pilavı"),ingredients:B("Bulgur, Seasonal vegetables, Onions, Tomato paste","Bulgur, Mevsim sebzeleri, Kuru soğan, Domates salçası"),notes:B("Serve with kefir or salad","Kefir veya salatayla servis edilebilir")},
-    {key:"pea",name:B("Pea and ground meat stew","Kıymalı bezelye yemeği"),ingredients:B("Peas, Ground meat, Onions, Tomato paste, Olive oil","Bezelye, Kıyma, Kuru soğan, Domates salçası, Zeytinyağı"),notes:B("Serve with yogurt","Yoğurtla servis edilebilir")},
-    {key:"pasta",name:B("Pasta with yogurt and salad","Yoğurtlu makarna ve salata"),ingredients:B("Pasta, Yogurt, Salad greens","Makarna, Yoğurt, Salata yeşillikleri"),notes:""},
-    {key:"omelette",name:B("Vegetable omelette","Sebzeli omlet"),ingredients:B("Eggs, Seasonal vegetables, Olive oil","Yumurta, Mevsim sebzeleri, Zeytinyağı"),notes:B("A simple breakfast or light meal","Basit bir kahvaltı veya hafif öğün")},
-    {key:"peaRice",name:B("Rice with peas and yogurt","Bezelyeli pilav ve yoğurt"),ingredients:B("Basmati rice, Peas, Yogurt","Basmati pirinç, Bezelye, Yoğurt"),notes:""},
-    {key:"snack",name:B("Fruit and cinnamon milk","Meyve ve tarçınlı süt"),ingredients:B("Fruit, Milk, Cinnamon","Meyve, Süt, Tarçın"),notes:B("Afternoon snack","İkindi ara öğünü")}
+    {key:"oats",name:B("Oatmeal with banana","Muzlu yulaf lapası"),ingredients:B("Oats, Bananas, Milk","Yulaf ezmesi, Muz, Süt"),notes:B("An example breakfast for the fictionalized plan","Kurgulanmış plan için örnek bir kahvaltı")},
+    {key:"toast",name:B("Egg and toast plate","Yumurtalı tost tabağı"),ingredients:B("Eggs, Whole-grain bread, Yogurt, Apples","Yumurta, Tam tahıllı ekmek, Yoğurt, Elma"),notes:""},
+    {key:"lentil",name:B("Lentil and vegetable soup","Mercimekli sebze çorbası"),ingredients:B("Lentils, Onions, Carrots, Tomato puree, Sunflower oil, Vegetable stock","Mercimek, Kuru soğan, Havuç, Domates püresi, Ayçiçek yağı, Sebze suyu"),notes:B("Season according to the household's preferences","Hanenin tercihlerine göre lezzetlendirilebilir")},
+    {key:"chickpeaRice",name:B("Chickpea and rice bowl","Nohutlu pirinç kasesi"),ingredients:B("Chickpeas, Rice, Salad greens, Yogurt","Nohut, Pirinç, Salata yeşillikleri, Yoğurt"),notes:""},
+    {key:"pasta",name:B("Pasta with vegetables","Sebzeli makarna"),ingredients:B("Pasta, Frozen vegetables, Tomato puree, Sunflower oil","Makarna, Dondurulmuş sebzeler, Domates püresi, Ayçiçek yağı"),notes:""},
+    {key:"omelette",name:B("Vegetable omelette","Sebzeli omlet"),ingredients:B("Eggs, Courgettes, Onions, Sunflower oil","Yumurta, Kabak, Kuru soğan, Ayçiçek yağı"),notes:B("An example breakfast or light meal","Örnek bir kahvaltı veya hafif öğün")},
+    {key:"potato",name:B("Potato and carrot stew","Patatesli havuç yemeği"),ingredients:B("Potatoes, Carrots, Onions, Tomato puree, Sunflower oil","Patates, Havuç, Kuru soğan, Domates püresi, Ayçiçek yağı"),notes:""},
+    {key:"vegetableRice",name:B("Rice with vegetables","Sebzeli pirinç pilavı"),ingredients:B("Rice, Frozen vegetables, Sunflower oil","Pirinç, Dondurulmuş sebzeler, Ayçiçek yağı"),notes:""},
+    {key:"yogurtFruit",name:B("Yogurt with fruit and nuts","Meyveli ve kuruyemişli yoğurt"),ingredients:B("Yogurt, Apples, Nuts","Yoğurt, Elma, Kuruyemiş"),notes:B("An example snack or light meal","Örnek bir ara öğün veya hafif yemek")},
+    {key:"peanutToast",name:B("Peanut butter and banana toast","Fıstık ezmeli ve muzlu tost"),ingredients:B("Whole-grain bread, Peanut butter, Bananas","Tam tahıllı ekmek, Fıstık ezmesi, Muz"),notes:""},
+    {key:"chickpeaPotato",name:B("Chickpea and potato stew","Nohutlu patates yemeği"),ingredients:B("Chickpeas, Potatoes, Onions, Tomato puree, Sunflower oil","Nohut, Patates, Kuru soğan, Domates püresi, Ayçiçek yağı"),notes:""}
   ],
   mealPlan: [
-    {breakfast:"breakfast",lunch:"lentil",dinner:"vegetable"},
-    {breakfast:"omelette",lunch:"pasta",dinner:"chickpea"},
-    {breakfast:"breakfast",lunch:"lentil",dinner:"pea"},
-    {breakfast:"breakfast",lunch:"peaRice",dinner:"okra"},
-    {breakfast:"omelette",lunch:"okra",dinner:"vegetable"},
-    {breakfast:"breakfast",lunch:"bulgur",dinner:"pasta"},
-    {breakfast:"breakfast",lunch:"peaRice",dinner:"chickpea"}
+    {breakfast:"oats",lunch:"lentil",dinner:"chickpeaRice"},
+    {breakfast:"toast",lunch:"pasta",dinner:"potato"},
+    {breakfast:"omelette",lunch:"lentil",dinner:"vegetableRice"},
+    {breakfast:"oats",lunch:"yogurtFruit",dinner:"chickpeaPotato"},
+    {breakfast:"peanutToast",lunch:"pasta",dinner:"potato"},
+    {breakfast:"toast",lunch:"chickpeaRice",dinner:"vegetableRice"},
+    {breakfast:"omelette",lunch:"lentil",dinner:"chickpeaPotato"}
   ],
   measurements: [{
-    name:B("Daily blood glucose measurements","Günlük kan şekeri ölçümleri"),
+    name:B("Example health measurements","Örnek sağlık ölçümleri"),
     columns:[
       {label:B("Date","Tarih"),type:"date"},
-      {label:B("Time of day","Ölçüm zamanı"),type:"text"},
-      {label:B("Fasting / After eating","Açlık / Tokluk"),type:"text"},
-      {label:B("Medication / Notes","İlaç / Notlar"),type:"text"},
-      {label:B("Blood glucose value","Kan şekeri değeri"),type:"text"}
+      {label:B("Time","Saat"),type:"text"},
+      {label:B("Measurement type","Ölçüm türü"),type:"text"},
+      {label:B("Notes","Notlar"),type:"text"},
+      {label:B("Value","Değer"),type:"text"}
     ],
     rows:[]
   }]

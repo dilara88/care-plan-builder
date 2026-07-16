@@ -321,7 +321,7 @@ async function runLocale(locale, expected){
     f.fillAll(); const first = app.getState().duties.length; f.fillAll(); assert.equal(app.getState().duties.length, first);
   });
 
-  await test(`${expected.code}: load complete anonymized example`, async () => {
+  await test(`${expected.code}: load complete fictionalized example`, async () => {
     await f.loadExample(true); const state = app.getState();
     assert.equal(state.roles.length, 5); assert(state.duties.some(duty => duty.name === expected.budget));
     assert.equal(state.shopping.length, 7); assert.equal(state.meals.length, 11); assert.equal(state.mealPlan.length, 7);
@@ -497,14 +497,14 @@ await test("cross-language switch translates every example module repeatedly", a
   let state=app.getState();
   assert(state.roles.some(role=>role.name==="Bakım sorumlusu"));
   assert(state.duties.some(duty => duty.name === "Bütçe yönetimi"));
-  assert(state.shopping.some(category=>category.name==="Kahvaltılıklar"&&category.items.some(item=>item.name==="Beyaz peynir")));
-  assert(state.meals.some(meal=>meal.name==="Kahvaltı tabağı"&&meal.ingredients.includes("Beyaz peynir")));
-  assert(state.measurements.some(table=>table.name==="Günlük kan şekeri ölçümleri"&&table.columns.some(column=>column.label==="Ölçüm zamanı")));
+  assert(state.shopping.some(category=>category.name==="Kahvaltı temel ürünleri"&&category.items.some(item=>item.name==="Yulaf ezmesi")));
+  assert(state.meals.some(meal=>meal.name==="Muzlu yulaf lapası"&&meal.ingredients.includes("Yulaf ezmesi")));
+  assert(state.measurements.some(table=>table.name==="Örnek sağlık ölçümleri"&&table.columns.some(column=>column.label==="Ölçüm türü")));
   document.getElementById("rName").value = "User role"; f.submitRole(); const count = app.getState().roles.length;
   f.toggleLang(); assert.equal(app.getLang(), "en");state=app.getState();assert.equal(state.roles.length,count);assert(state.roles.some(role=>role.name==="User role"));
   assert(state.roles.some(role=>role.name==="Care manager"));assert(state.duties.some(duty=>duty.name==="Budget management"));
-  assert(state.shopping.some(category=>category.name==="Breakfast"&&category.items.some(item=>item.name==="White cheese")));
-  assert(state.meals.some(meal=>meal.name==="Breakfast plate"));assert(state.measurements.some(table=>table.name==="Daily blood glucose measurements"));
+  assert(state.shopping.some(category=>category.name==="Breakfast basics"&&category.items.some(item=>item.name==="Oats")));
+  assert(state.meals.some(meal=>meal.name==="Oatmeal with banana"));assert(state.measurements.some(table=>table.name==="Example health measurements"));
   f.toggleLang();f.toggleLang();assert.equal(app.getLang(),"en");assert(app.getState().roles.some(role=>role.name==="User role"));
 });
 

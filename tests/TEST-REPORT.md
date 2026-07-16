@@ -1,8 +1,8 @@
 # Care Plan Builder Release Test Report
 
-Date: 16 July 2026  
-Production file: `care-plan-builder.html`  
-SHA-256: `80D98AD81536B764014035A46DF7C03A6CA45B81A5A1367C382506E16CC0A017`
+Date: 17 July 2026<br>
+Production file: `care-plan-builder.html`<br>
+SHA-256: `2E0DC86F4647C7DAC11EC2B50DE10D2FE995E47F26D64A4B0F28AE12FCBD5978`
 
 This report covers the exact HTML build identified above. The automated suites, multi-device real-browser checks and bilingual PDFs were regenerated after the final standards, security, accessibility, documentation, responsive-layout and heading title-case changes.
 
@@ -31,7 +31,7 @@ This report covers the exact HTML build identified above. The automated suites, 
 - Fraunces is no longer used or listed as a bundled font.
 - The README accurately describes offline glossary translation and preserved unmatched wording.
 - Local development and visual-test artifacts are excluded through `.gitignore`.
-- At phone width, role and duty rows, role and duty forms, Shopping Guide items, current-list actions and custom measurement rows reflow within their frames.
+- At phone width, role and duty rows, role and duty forms, Shopping Guide items, current-list actions, starter-prompt panels and custom measurement rows reflow within their frames; the weekly meal plan becomes a labelled day-card layout.
 - Compact 600 px tablets use readable two-column role and duty forms, while 768 px and wider tablet and desktop layouts retain their original row and table presentation.
 - The creator credit is centered on the webpage and in both PDF languages.
 
@@ -56,11 +56,11 @@ The release browser script opened the final local HTML directly from disk with i
 
 - Chrome and Edge loaded the app in standards mode and completed bilingual example-plan smoke tests.
 - Chrome emulated 390 × 844 mobile and 768 × 900 tablet viewports with no horizontal overflow.
-- The 390 px pass opened the Turkish Shopping Guide and Custom Measurement Tables, checked every relevant child against its container, and visually captured the guide, current list and a populated measurement row.
-- The 768 px pass explicitly confirmed that shopping items remain rows, measurement tables remain tables and the original module spacing is preserved.
+- The 390 px pass opened both English and Turkish Shopping and Meal starter prompts, checked their complete contents against each panel, and visually captured both prompts, the labelled day-card meal plan, the Shopping Guide, current list and a populated measurement row.
+- The 768 px pass explicitly confirmed that starter prompts retain their original flex layout, the weekly meal plan remains a table, shopping items remain rows, measurement tables remain tables and the original module spacing is preserved.
 - The expanded touch-enabled matrix covered 11 representative profiles: 360, 375, 390 and 412 px portrait phones; 740 px phone landscape; 600, 768, 800 and 820 px portrait tablets; 1024 px tablet landscape; and 1366 px desktop.
 - Every profile was checked in English and Turkish across all nine sections, for 198 rendered section states. Page width, section surfaces, summaries, summary contents and form controls remained contained, with intentional table scrolling distinguished from page overflow.
-- Visual evidence was reviewed for a narrow Android phone, phone landscape, a compact Android tablet, an iPad-sized tablet and desktop, including role/duty forms and rows, shopping, meals, measurements, generated plan, coverage and workload.
+- Visual evidence was reviewed for a narrow Android phone, phone landscape, a compact Android tablet, an iPad-sized tablet and desktop, including role/duty forms and rows, shopping and meal starter prompts, the weekly meal plan, meals, measurements, generated plan, coverage and workload.
 - The English and Turkish example result views remained readable at both tested widths.
 - Native disclosure controls toggled from the keyboard.
 - A care option could be chosen with Enter.
@@ -89,8 +89,8 @@ This provides a useful screen-reader semantic proxy, but it is not a substitute 
 
 Fresh PDFs were created from the exact release build after loading the complete example plan and closing every screen section first. The test confirmed that printing temporarily opened every section, rendered the complete plan and restored the collapsed screen state afterward.
 
-- English: 7 A4 pages, 437,265 bytes.
-- Turkish: 7 A4 pages, 472,626 bytes.
+- English: 7 A4 pages, 437,312 bytes.
+- Turkish: 7 A4 pages, 472,664 bytes.
 - Browser-generated headers and footers were disabled.
 - All 14 pages were opened in Chrome's PDF viewer and visually inspected.
 - No content clipping, overlap, distorted glyphs or broken table continuation was found.

@@ -504,6 +504,12 @@ test("mobile shopping and measurement layouts prevent clipped controls", () => {
   assert.match(html, /@media \(min-width:561px\) and \(max-width:640px\)/);
   assert.match(html, /#shoppingDetails \.guide-item\{display:grid/);
   assert.match(html, /#shoppingDetails \.current-item\{display:grid/);
+  assert.match(html, /#shoppingDetails \.starter-box,#mealDetails \.starter-box\{display:block/);
+  assert.match(html, /#shoppingDetails \.starter-copy,#mealDetails \.starter-copy\{width:100%; min-width:0/);
+  assert.match(html, /#mealDetails \.meal-plan thead\{display:none\}/);
+  assert.match(html, /#mealDetails \.meal-plan tbody\{display:grid/);
+  assert.match(html, /#mealDetails \.meal-plan td\{display:grid; grid-template-columns:1fr/);
+  assert.match(html, /data-label="\$\{esc\(t\("mealSlots"\)\[slot\]\)\}"/);
   assert.match(html, /class="item-actions"/);
   assert.match(html, /class="btn-ghost current-action"/);
   assert.match(html, /#measurementDetails \.measurement-table thead\{display:none\}/);
